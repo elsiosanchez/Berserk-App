@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="berserk-icon.svg" width="80" alt="BERSERK Logo"/>
+<img src="https://github.com/user-attachments/assets/81cbd294-cde0-48a6-a004-5ebfa2cedc81" width="80" alt="BERSERK Logo"/>
 
 # B E R S E R K
 
