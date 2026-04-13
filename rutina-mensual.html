@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rutina de Volumen | Plan Mensual 4 Semanas</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b; --card: #14141a; --card2: #1a1a22; --border: #222230;
+    --accent: #e8ff3a; --accent2: #ff4d2e; --text: #f0f0f0; --muted: #666;
+    --chest: #ff4d2e; --back: #3a8eff; --legs: #a855f7; --shoulders: #ff9f3a; --arms: #e8ff3a;
+    --warmup: #27ae60; --home: #e67e22;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Barlow',sans-serif; min-height:100vh; overflow-x:hidden; }
+
+  header { position:relative; padding:50px 40px 40px; overflow:hidden; border-bottom:1px solid var(--border); }
+  header::before { content:'VOLUMEN'; position:absolute; top:-10px; right:-10px; font-family:'Bebas Neue'; font-size:160px; color:rgba(232,255,58,0.04); pointer-events:none; line-height:1; }
+  .header-tag { display:inline-block; background:var(--accent); color:#000; font-family:'Barlow Condensed'; font-weight:700; font-size:11px; letter-spacing:3px; padding:4px 12px; margin-bottom:16px; }
+  h1 { font-family:'Bebas Neue'; font-size:clamp(52px,9vw,88px); line-height:0.9; letter-spacing:2px; }
+  h1 span { color:var(--accent); display:block; }
+  .header-stats { display:flex; gap:36px; margin-top:28px; flex-wrap:wrap; }
+  .stat { display:flex; flex-direction:column; gap:3px; }
+  .stat-val { font-family:'Bebas Neue'; font-size:30px; color:var(--accent); line-height:1; }
+  .stat-label { font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; font-weight:600; }
+
+  /* Week Selector */
+  .week-selector { display:flex; border-bottom:1px solid var(--border); padding:0 40px; background:rgba(20,20,26,0.8); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; }
+  .week-btn { background:none; border:none; color:var(--muted); font-family:'Bebas Neue'; font-size:18px; letter-spacing:2px; padding:18px 28px; cursor:pointer; text-transform:uppercase; white-space:nowrap; position:relative; transition:color 0.2s; border-bottom:3px solid transparent; margin-bottom:-1px; }
+  .week-btn:hover { color:var(--text); }
+  .week-btn.active { color:var(--accent); }
+  .week-btn.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:3px; background:var(--accent); }
+  .week-btn .week-sub { display:block; font-family:'Barlow Condensed'; font-size:10px; color:var(--muted); letter-spacing:1px; margin-top:2px; }
+
+  .day-nav { display:flex; overflow-x:auto; border-bottom:1px solid var(--border); padding:0 40px; scrollbar-width:none; }
+  .day-nav::-webkit-scrollbar { display:none; }
+  .day-btn { background:none; border:none; color:var(--muted); font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:2px; padding:16px 22px; cursor:pointer; text-transform:uppercase; white-space:nowrap; position:relative; transition:color 0.2s; border-bottom:3px solid transparent; margin-bottom:-1px; }
+  .day-btn:hover { color:var(--text); }
+  .day-btn.active { color:var(--text); }
+  .day-btn.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:3px; background:var(--accent); }
+
+  main { padding:36px 40px; max-width:1280px; margin:0 auto; }
+  .week-panel { display:none; }
+  .week-panel.active { display:block; }
+  .day-panel { display:none; }
+  .day-panel.active { display:block; animation:fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  .day-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+  .day-title { font-family:'Bebas Neue'; font-size:58px; line-height:0.9; }
+  .muscle-tag { font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:3px; padding:5px 13px; text-transform:uppercase; border:1px solid currentColor; margin-top:10px; display:block; width:fit-content; }
+  .day-meta { text-align:right; font-family:'Barlow Condensed'; }
+  .day-meta .big-num { font-family:'Bebas Neue'; font-size:44px; color:var(--accent); line-height:1; }
+  .day-meta small { font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; display:block; }
+
+  .exercises-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:16px; margin-bottom:32px; }
+
+  .ex-card { background:var(--card); border:1px solid var(--border); overflow:hidden; display:flex; flex-direction:column; transition:border-color 0.2s, transform 0.2s; }
+  .ex-card:hover { border-color:#333344; transform:translateY(-2px); }
+
+  .ex-image-wrap { position:relative; height:190px; overflow:hidden; background:#0c0c14; }
+  .ex-image-wrap img { width:100%; height:100%; object-fit:cover; object-position:center top; filter:brightness(0.82) contrast(1.08) saturate(0.9); transition:transform 0.5s ease; display:block; }
+  .ex-card:hover .ex-image-wrap img { transform:scale(1.06); }
+  .ex-img-fallback { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:14px; font-family:'Barlow Condensed'; font-weight:700; letter-spacing:2px; color:var(--muted); text-transform:uppercase; background:linear-gradient(135deg,#0f0f18,#1a1a28); }
+  .ex-image-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(10,10,11,0.96) 0%,rgba(10,10,11,0.15) 55%,transparent 100%); }
+  .ex-num-badge { position:absolute; top:12px; left:12px; font-family:'Bebas Neue'; font-size:12px; background:rgba(0,0,0,0.8); color:var(--muted); padding:3px 9px; letter-spacing:2px; }
+  .ex-type-badge { position:absolute; top:12px; right:12px; font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; padding:3px 9px; text-transform:uppercase; }
+  .type-compound { background:rgba(232,255,58,0.15); color:var(--accent); border:1px solid rgba(232,255,58,0.35); }
+  .type-iso { background:rgba(255,77,46,0.15); color:var(--accent2); border:1px solid rgba(255,77,46,0.35); }
+
+  .ex-body { padding:14px 16px 16px; display:flex; flex-direction:column; gap:12px; flex:1; }
+  .ex-title { font-family:'Barlow Condensed'; font-size:19px; font-weight:700; color:var(--text); line-height:1.15; }
+  .ex-subtitle { font-size:12px; color:var(--muted); margin-top:2px; }
+
+  .ex-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); }
+  .ex-stat-box { background:var(--card2); padding:9px 6px; text-align:center; }
+  .ex-stat-val { font-family:'Bebas Neue'; font-size:20px; color:var(--text); line-height:1; }
+  .ex-stat-lbl { font-family:'Barlow Condensed'; font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-top:2px; }
+
+  .rest-timer-row { display:flex; align-items:center; justify-content:space-between; background:var(--card2); border:1px solid var(--border); padding:9px 12px; gap:8px; }
+  .rest-info { display:flex; flex-direction:column; gap:1px; flex:1; }
+  .rest-label { font-family:'Barlow Condensed'; font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+  .rest-val { font-family:'Bebas Neue'; font-size:18px; color:var(--accent); line-height:1; }
+  .timer-countdown { font-family:'Bebas Neue'; font-size:20px; color:var(--accent2); min-width:46px; text-align:center; }
+  .timer-btn { background:var(--accent); color:#000; border:none; font-family:'Barlow Condensed'; font-weight:700; font-size:11px; letter-spacing:2px; padding:7px 14px; cursor:pointer; text-transform:uppercase; transition:background 0.15s; white-space:nowrap; flex-shrink:0; }
+  .timer-btn:hover { background:#d4eb2a; }
+  .timer-btn.running { background:var(--accent2); color:#fff; }
+  .timer-btn.done { background:#27ae60; color:#fff; }
+
+  .ex-hint { font-size:12px; color:#888; line-height:1.55; border-left:2px solid var(--border); padding-left:10px; }
+
+  .yt-btn { display:flex; align-items:center; gap:8px; background:#ff0000; color:#fff; text-decoration:none; font-family:'Barlow Condensed'; font-weight:700; font-size:12px; letter-spacing:2px; padding:9px 14px; text-transform:uppercase; transition:background 0.15s; border:none; cursor:pointer; }
+  .yt-btn:hover { background:#cc0000; }
+  .yt-btn svg { flex-shrink:0; }
+
+  .tip-card { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--accent); padding:18px 22px; margin-top:4px; }
+  .tip-title { font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  .tip-text { font-size:14px; color:#aaa; line-height:1.65; }
+
+  /* Section headers */
+  .section-header { display:flex; align-items:center; gap:14px; margin:32px 0 18px; }
+  .section-header::after { content:''; flex:1; height:1px; background:var(--border); }
+  .section-icon { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .section-label { font-family:'Bebas Neue'; font-size:26px; letter-spacing:2px; }
+  .section-sublabel { font-family:'Barlow Condensed'; font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+
+  .warmup-icon { background:rgba(39,174,96,0.15); border:1px solid rgba(39,174,96,0.3); }
+  .warmup-label { color:var(--warmup); }
+  .home-icon { background:rgba(230,126,34,0.15); border:1px solid rgba(230,126,34,0.3); }
+  .home-label { color:var(--home); }
+  .gym-icon { background:rgba(232,255,58,0.15); border:1px solid rgba(232,255,58,0.3); }
+  .gym-label { color:var(--accent); }
+
+  /* Warmup cards */
+  .warmup-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; margin-bottom:24px; }
+  .warmup-card { background:var(--card); border:1px solid rgba(39,174,96,0.2); padding:16px; display:flex; gap:14px; align-items:flex-start; transition:border-color 0.2s; }
+  .warmup-card:hover { border-color:rgba(39,174,96,0.5); }
+  .warmup-num { font-family:'Bebas Neue'; font-size:28px; color:rgba(39,174,96,0.3); line-height:1; flex-shrink:0; }
+  .warmup-name { font-family:'Barlow Condensed'; font-size:15px; font-weight:700; color:var(--text); }
+  .warmup-detail { font-size:12px; color:var(--muted); margin-top:4px; line-height:1.45; }
+  .warmup-dur { font-family:'Bebas Neue'; font-size:14px; color:var(--warmup); margin-top:6px; }
+
+  /* Home cards */
+  .home-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; margin-bottom:24px; }
+  .home-card { background:var(--card); border:1px solid rgba(230,126,34,0.2); overflow:hidden; transition:border-color 0.2s, transform 0.2s; }
+  .home-card:hover { border-color:rgba(230,126,34,0.5); transform:translateY(-2px); }
+  .home-img-wrap { position:relative; height:150px; overflow:hidden; background:#0c0c14; }
+  .home-img-wrap img { width:100%; height:100%; object-fit:cover; filter:brightness(0.75) contrast(1.1); transition:transform 0.5s; }
+  .home-card:hover .home-img-wrap img { transform:scale(1.06); }
+  .home-img-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(10,10,11,0.95) 0%,transparent 60%); }
+  .home-badge { position:absolute; top:10px; right:10px; font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; padding:3px 9px; text-transform:uppercase; background:rgba(230,126,34,0.2); color:var(--home); border:1px solid rgba(230,126,34,0.4); }
+  .home-body { padding:14px 16px 16px; }
+  .home-title { font-family:'Barlow Condensed'; font-size:17px; font-weight:700; color:var(--text); }
+  .home-sub { font-size:11px; color:var(--muted); margin-top:3px; }
+  .home-stats { display:flex; gap:16px; margin-top:10px; }
+  .home-stat { text-align:center; }
+  .home-stat-val { font-family:'Bebas Neue'; font-size:18px; color:var(--home); }
+  .home-stat-lbl { font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; color:var(--muted); text-transform:uppercase; }
+  .home-hint { font-size:12px; color:#777; line-height:1.5; margin-top:10px; border-left:2px solid rgba(230,126,34,0.3); padding-left:10px; }
+
+  /* Nutrition */
+  .nutrition-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); margin:32px 0; }
+  .nutr-box { background:var(--card); padding:20px; text-align:center; }
+  .nutr-val { font-family:'Bebas Neue'; font-size:36px; color:var(--accent); line-height:1; }
+  .nutr-label { font-family:'Barlow Condensed'; font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-top:4px; }
+  .principles { display:grid; grid-template-columns:repeat(auto-fit,minmax(195px,1fr)); gap:14px; margin-top:32px; }
+  .principle-card { background:var(--card); border:1px solid var(--border); padding:20px; }
+  .principle-num { font-family:'Bebas Neue'; font-size:42px; color:var(--border); line-height:1; margin-bottom:6px; }
+  .principle-title { font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:7px; }
+  .principle-text { font-size:13px; color:#888; line-height:1.6; }
+
+  /* Color themes */
+  [data-color="chest"] .day-title { color:var(--chest); } [data-color="chest"] .muscle-tag { color:var(--chest); border-color:var(--chest); }
+  [data-color="back"] .day-title { color:var(--back); } [data-color="back"] .muscle-tag { color:var(--back); border-color:var(--back); }
+  [data-color="legs"] .day-title { color:var(--legs); } [data-color="legs"] .muscle-tag { color:var(--legs); border-color:var(--legs); }
+  [data-color="shoulders"] .day-title { color:var(--shoulders); } [data-color="shoulders"] .muscle-tag { color:var(--shoulders); border-color:var(--shoulders); }
+  [data-color="arms"] .day-title { color:var(--arms); } [data-color="arms"] .muscle-tag { color:var(--arms); border-color:var(--arms); }
+
+  /* Progress bar */
+  .progress-wrap { padding:0 40px; border-bottom:1px solid var(--border); }
+  .progress-bar-bg { height:4px; background:var(--card2); position:relative; }
+  .progress-bar-fill { height:100%; background:var(--accent); transition:width 0.5s ease; }
+  .progress-info { display:flex; justify-content:space-between; padding:8px 0; }
+  .progress-label { font-family:'Barlow Condensed'; font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+
+  @media(max-width:768px) {
+    header, main { padding:22px 16px; }
+    .week-selector, .day-nav { padding:0 14px; }
+    .week-btn { padding:14px 16px; font-size:15px; }
+    h1 { font-size:46px; }
+    .exercises-grid, .home-grid { grid-template-columns:1fr; }
+    .warmup-grid { grid-template-columns:1fr 1fr; }
+    .day-title { font-size:46px; }
+  }
+  @media(max-width:480px) {
+    .warmup-grid { grid-template-columns:1fr; }
+    .week-btn { padding:12px 10px; font-size:13px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">PLAN PERSONALIZADO · HIPERTROFIA · 4 SEMANAS</div>
+  <h1>RUTINA<span>DE VOLUMEN</span></h1>
+  <div class="header-stats">
+    <div class="stat"><span class="stat-val">30</span><span class="stat-label">Años</span></div>
+    <div class="stat"><span class="stat-val">80kg</span><span class="stat-label">Peso</span></div>
+    <div class="stat"><span class="stat-val">1.79m</span><span class="stat-label">Altura</span></div>
+    <div class="stat"><span class="stat-val">6</span><span class="stat-label">Días / Semana</span></div>
+    <div class="stat"><span class="stat-val">PPL</span><span class="stat-label">Método</span></div>
+    <div class="stat"><span class="stat-val">4</span><span class="stat-label">Semanas</span></div>
+  </div>
+</header>
+
+<nav class="week-selector" id="weekNav"></nav>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span class="progress-label" id="progressLabel">Semana 1 de 4</span>
+    <span class="progress-label" id="progressPct">25%</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:25%"></div></div>
+</div>
+
+<div id="dayNavContainer"></div>
+<main id="mainContent"></main>
+
+<script>
+// ══════════════════════════════════════════
+// COMPLETE MONTHLY ROUTINE DATA
+// ══════════════════════════════════════════
+
+const IMG = {
+  // Chest
+  benchPress: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=640&q=80',
+  inclineDB: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=640&q=80',
+  cableFly: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=640&q=80',
+  chestPress: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=640&q=80',
+  dips: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?w=640&q=80',
+  pushups: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=640&q=80',
+  // Back
+  deadlift: 'https://images.unsplash.com/photo-1603287681836-b174ce5074c2?w=640&q=80',
+  barRow: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=640&q=80',
+  pullup: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=640&q=80',
+  latPull: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=640&q=80',
+  cableRow: 'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=640&q=80',
+  curlEZ: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=640&q=80',
+  // Legs
+  squat: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=640&q=80',
+  legPress: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=640&q=80',
+  rdl: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?w=640&q=80',
+  legExt: 'https://images.unsplash.com/photo-1549476464-37392f717541?w=640&q=80',
+  legCurl: 'https://images.unsplash.com/photo-1540747913346-19212a4dfd5b?w=640&q=80',
+  calfRaise: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=640&q=80',
+  lunge: 'https://images.unsplash.com/photo-1434608519344-49d77a699e1d?w=640&q=80',
+  // Shoulders
+  ohp: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=640&q=80',
+  arnoldPress: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=640&q=80',
+  latRaise: 'https://images.unsplash.com/photo-1590487988256-9ed24133863e?w=640&q=80',
+  frontRaise: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=640&q=80',
+  rearDelt: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=640&q=80',
+  shrugs: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=640&q=80',
+  // Arms
+  curlBar: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=640&q=80',
+  curlIncline: 'https://images.unsplash.com/photo-1567013127542-490d757e51cd?w=640&q=80',
+  curlScott: 'https://images.unsplash.com/photo-1550345332-09e3ac987658?w=640&q=80',
+  skullCrusher: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=640&q=80',
+  closeBench: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=640&q=80',
+  overheadTri: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=640&q=80',
+  // Home
+  homePush: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?w=640&q=80',
+  homeRow: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=640&q=80',
+  homeSquat: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=640&q=80',
+  homeShoulder: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=640&q=80',
+  homeArms: 'https://images.unsplash.com/photo-1550345332-09e3ac987658?w=640&q=80',
+  homeLegs2: 'https://images.unsplash.com/photo-1434608519344-49d77a699e1d?w=640&q=80',
+  gym1: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=640&q=80',
+  gym2: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=640&q=80',
+  gym3: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=640&q=80',
+  gym4: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=640&q=80',
+};
+
+const WARMUPS = {
+  chest: [
+    { name:'Rotaciones de Hombro', detail:'Círculos amplios con los brazos · 20 repeticiones por dirección', dur:'1 min' },
+    { name:'Band Pull-Aparts', detail:'Con banda elástica a la altura de los hombros · 15 reps', dur:'1 min' },
+    { name:'Flexiones con Palmada', detail:'5 flexiones explosivas para activar el SNC', dur:'1 min' },
+    { name:'Rotación Externa con Banda', detail:'Codo pegado al cuerpo · 15 reps por lado', dur:'2 min' },
+    { name:'Press de Banca Vacío', detail:'2 series × 15 reps solo con la barra · rango completo', dur:'3 min' },
+  ],
+  back: [
+    { name:'Cat-Cow (Gato-Vaca)', detail:'Arqueo y extensión de espalda en cuadrupedia · 10 ciclos', dur:'1 min' },
+    { name:'Colgarse de Barra', detail:'Dejarse colgar 30 seg para descomprimir la columna', dur:'1 min' },
+    { name:'Remo con Banda', detail:'Banda elástica anclada · 15 reps enfocando omóplatos', dur:'1 min' },
+    { name:'Dislocaciones con Palo', detail:'Palo ancho por encima de la cabeza · 10 reps', dur:'1 min' },
+    { name:'Peso Muerto con Barra Vacía', detail:'2 series × 10 reps solo con la barra · técnica perfecta', dur:'3 min' },
+  ],
+  legs: [
+    { name:'Caminata Lateral con Banda', detail:'Banda en rodillas · 15 pasos por lado', dur:'2 min' },
+    { name:'Sentadilla Goblet sin Peso', detail:'20 reps con tempo lento, profundidad máxima', dur:'2 min' },
+    { name:'Activación de Glúteos', detail:'Puente de glúteos × 15 reps con pausa arriba', dur:'1 min' },
+    { name:'Estiramiento de Cadera', detail:'90/90 stretch + pigeon pose · 30 seg por lado', dur:'2 min' },
+    { name:'Sentadilla con Barra Vacía', detail:'2 series × 12 reps solo con la barra', dur:'2 min' },
+  ],
+  shoulders: [
+    { name:'Círculos de Brazo', detail:'Progresivos: pequeños → grandes · 20 seg por dirección', dur:'1 min' },
+    { name:'Face Pulls con Banda', detail:'15 reps con banda liviana · enfoque en rotadores', dur:'1 min' },
+    { name:'Rotación Y-T-W', detail:'Tumbado boca abajo · 8 reps de cada letra', dur:'2 min' },
+    { name:'Elevaciones Laterales Vacías', detail:'Simular el movimiento sin peso · 15 reps', dur:'1 min' },
+    { name:'Press con Barra Vacía', detail:'2 series × 12 reps solo con la barra', dur:'2 min' },
+  ],
+  arms: [
+    { name:'Flexiones de Muñeca', detail:'Abrir y cerrar puños 20 veces + rotaciones', dur:'1 min' },
+    { name:'Curl con Banda Liviana', detail:'15 reps lentas con banda elástica', dur:'1 min' },
+    { name:'Extensión de Tríceps sin Peso', detail:'Simular press francés 15 reps', dur:'1 min' },
+    { name:'Rotación de Codos', detail:'Círculos con los codos · 15 por dirección', dur:'1 min' },
+    { name:'Series de Activación', detail:'10 curl + 10 extensiones con banda liviana', dur:'2 min' },
+  ],
+  legs2: [
+    { name:'Foam Rolling Isquios', detail:'Rodillo de espuma en isquiotibiales · 1 min por pierna', dur:'2 min' },
+    { name:'Peso Muerto con Palo', detail:'Bisagra de cadera perfecta · 15 reps', dur:'1 min' },
+    { name:'Plancha Frontal', detail:'Activación de core · 45 seg', dur:'1 min' },
+    { name:'Buenos Días sin Peso', detail:'Manos detrás de la cabeza · 15 reps', dur:'1 min' },
+    { name:'Hip Circles', detail:'Rotaciones de cadera amplias · 10 por dirección', dur:'1 min' },
+  ],
+};
+
+const HOME_ALTS = {
+  chest: {
+    w1: [
+      { name:'Flexiones Diamante', sub:'Tríceps y pecho interior · manos juntas formando diamante', sets:4, reps:'12', extra:'Peso corporal', img:IMG.homePush, hint:'Apoya las manos formando un diamante bajo el pecho. Baja lento 3 seg. Si es fácil, eleva los pies en una silla.' },
+      { name:'Flexiones Declinadas', sub:'Pecho superior · pies en silla o escalón', sets:4, reps:'15', extra:'Elevado', img:IMG.pushups, hint:'Pies elevados en silla, manos al suelo. Imita un press inclinado. 4 series × 15.' },
+      { name:'Flexiones Abiertas', sub:'Pecho completo · agarre ancho', sets:3, reps:'20', extra:'Al fallo', img:IMG.gym1, hint:'Manos más anchas que los hombros. Baja hasta que el pecho toque el suelo. Última serie al fallo.' },
+      { name:'Dips en Sillas', sub:'Pecho inferior y tríceps · dos sillas como paralelas', sets:3, reps:'15', extra:'Con mochila', img:IMG.dips, hint:'Dos sillas paralelas. Inclina el torso hacia adelante. Agrega peso en mochila si es fácil.' },
+    ],
+    w2: [
+      { name:'Flexiones Archer', sub:'Unilateral · un brazo trabaja más que el otro', sets:3, reps:'8/lado', extra:'Avanzado', img:IMG.homePush, hint:'Una mano al frente, la otra abierta al costado. Cambia de lado cada serie.' },
+      { name:'Flexiones con Pausa', sub:'Isométrico abajo · 3 seg pausa en el fondo', sets:4, reps:'10', extra:'Tempo', img:IMG.pushups, hint:'Baja normal pero mantené 3 segundos abajo con el pecho tocando el suelo. Explosión al subir.' },
+      { name:'Flexiones Hindu', sub:'Movimiento fluido · pecho, hombros y tríceps', sets:3, reps:'12', extra:'Fluido', img:IMG.gym1, hint:'Desde posición de perro cabeza abajo, desliza el pecho al suelo y sube a cobra. Regresa.' },
+      { name:'Dips entre Sillas + Negativas', sub:'Fase excéntrica lenta de 5 seg al bajar', sets:3, reps:'10', extra:'Excéntrico', img:IMG.dips, hint:'Baja en 5 seg controlados. Sube normal. La fase excéntrica es donde más músculo se construye.' },
+    ],
+    w3: [
+      { name:'Flexiones con Mochila', sub:'Sobrecarga progresiva con peso adicional', sets:4, reps:'10', extra:'+Peso', img:IMG.homePush, hint:'Mochila cargada con libros o botellas. Mantén la espalda recta. Progresión de carga.' },
+      { name:'Flexiones 1.5 Reps', sub:'Medio rango + rango completo = 1 rep', sets:3, reps:'8', extra:'Técnica', img:IMG.pushups, hint:'Baja todo, sube a la mitad, vuelve a bajar, sube todo = 1 rep. Máxima tensión.' },
+      { name:'Flexiones Explosivas', sub:'Push-up pliométrico · manos dejan el suelo', sets:4, reps:'8', extra:'Potencia', img:IMG.gym1, hint:'Empuja explosivamente para que las manos se despeguen del suelo. Aterriza suave.' },
+      { name:'Fondos en Banco', sub:'Manos en banco, pies en el suelo o elevados', sets:3, reps:'15', extra:'Mochila', img:IMG.dips, hint:'Manos en el borde del banco/silla, cuerpo extendido. Agrega mochila en las piernas.' },
+    ],
+    w4: [
+      { name:'Flexiones Tempo 4-1-2', sub:'4 seg bajando, 1 pausa, 2 subiendo', sets:4, reps:'8', extra:'Control', img:IMG.homePush, hint:'El tempo forzado multiplica el tiempo bajo tensión. 8 reps equivalen a más de un minuto de trabajo.' },
+      { name:'Flexiones Escalonadas', sub:'Una mano más arriba que la otra · alterna', sets:3, reps:'10/lado', extra:'Unilateral', img:IMG.pushups, hint:'Una mano en un libro o escalón. Cambia de lado. Simula un press inclinado asimétrico.' },
+      { name:'Pseudo Planche Push-ups', sub:'Manos cerca de la cadera · inclinado adelante', sets:3, reps:'8', extra:'Avanzado', img:IMG.gym1, hint:'Dedos apuntan hacia los pies. Inclinate hacia adelante. Trabaja pecho bajo y anterior del hombro.' },
+      { name:'Circuito Final: 50 Flexiones', sub:'Completar 50 reps en las menos series posibles', sets:1, reps:'50 total', extra:'Challenge', img:IMG.dips, hint:'El objetivo es bajar el número de series cada semana. Semana 4 = máximo esfuerzo.' },
+    ],
+  },
+  back: {
+    w1: [
+      { name:'Remo Invertido bajo Mesa', sub:'Agarre prono al borde de una mesa sólida', sets:4, reps:'12', extra:'Peso corporal', img:IMG.homeRow, hint:'Acuéstate debajo de una mesa resistente. Agarra el borde y rema el cuerpo hacia arriba. Omóplatos juntos.' },
+      { name:'Superman Hold', sub:'Tumbado boca abajo · levanta brazos y piernas', sets:4, reps:'15', extra:'5 seg hold', img:IMG.gym3, hint:'Mantén arriba 5 seg cada rep. Trabaja erector espinal, glúteos y espalda baja.' },
+      { name:'Remo con Mochila', sub:'Mochila cargada · simula remo con mancuerna', sets:4, reps:'12/lado', extra:'Unilateral', img:IMG.homeRow, hint:'Un brazo rema la mochila, el otro apoyado en silla. Aprieta el omóplato arriba.' },
+      { name:'Curl de Bíceps con Mochila', sub:'Mochila como mancuerna · curl concentrado', sets:3, reps:'15', extra:'Concentrado', img:IMG.homeArms, hint:'Siéntate y apoya el codo en la rodilla. Curl concentrado con la mochila.' },
+    ],
+    w2: [
+      { name:'Dominadas en Puerta', sub:'Barra de puerta o toalla sobre puerta sólida', sets:4, reps:'Max', extra:'Al fallo', img:IMG.pullup, hint:'Si tenés barra de puerta, dominadas al fallo. Si no, toalla sobre puerta sólida para remo vertical.' },
+      { name:'Remo Isométrico', sub:'Sostén la posición de contracción máxima', sets:3, reps:'20 seg', extra:'Isométrico', img:IMG.homeRow, hint:'En posición de remo, mantén la contracción 20 seg. Aprieta los omóplatos.' },
+      { name:'Reverse Snow Angels', sub:'Boca abajo · brazos hacen ángel en el suelo', sets:3, reps:'12', extra:'Movilidad', img:IMG.gym3, hint:'Desde el suelo boca abajo, brazos extendidos hacen el movimiento de ángel. Trabaja espalda completa.' },
+      { name:'Curl Toalla', sub:'Toalla enrollada + resistencia del pie', sets:3, reps:'15', extra:'Creativo', img:IMG.homeArms, hint:'Pisa un extremo de la toalla, rema el otro. La resistencia la controlas con el pie.' },
+    ],
+    w3: [
+      { name:'Remo Invertido Pies Elevados', sub:'Pies en silla + remo bajo mesa', sets:4, reps:'10', extra:'Avanzado', img:IMG.homeRow, hint:'Pies elevados aumentan la dificultad. Rango completo desde extensión a contracción.' },
+      { name:'IYT Raises', sub:'Boca abajo · forma I, Y, T con los brazos', sets:3, reps:'8 c/u', extra:'Escápulas', img:IMG.gym3, hint:'Fortalece los estabilizadores escapulares. 8 reps de cada letra sin peso.' },
+      { name:'Remo Mochila Bilateral', sub:'Mochila pesada · remo inclinado con dos manos', sets:4, reps:'15', extra:'Pesado', img:IMG.homeRow, hint:'Mochila con máximo peso. Torso a 45°, rema hacia el ombligo. Pausa 2 seg arriba.' },
+      { name:'Curl Galón de Agua', sub:'Galón de 5L como mancuerna', sets:3, reps:'12', extra:'Funcional', img:IMG.homeArms, hint:'Un galón de agua pesa ~5kg. Curl completo, baja en 3 seg.' },
+    ],
+    w4: [
+      { name:'Remo Tempo bajo Mesa', sub:'3 seg subiendo, 3 seg bajando', sets:4, reps:'8', extra:'Tempo', img:IMG.homeRow, hint:'El tempo máximo bajo mesa. 8 reps con 6 seg cada una = casi un minuto de tensión.' },
+      { name:'Superman Alternado', sub:'Brazo derecho + pierna izquierda alternando', sets:3, reps:'20', extra:'Coordinación', img:IMG.gym3, hint:'Alternando brazos y piernas contrarias. Trabaja estabilización del core y espalda.' },
+      { name:'Dead Hang Challenge', sub:'Colgarse lo máximo posible de barra o puerta', sets:3, reps:'Max tiempo', extra:'Agarre', img:IMG.pullup, hint:'Fortalece el agarre y descomprime la columna. Intenta superar tu marca cada semana.' },
+      { name:'Curl 21s con Mochila', sub:'7 abajo, 7 arriba, 7 completas', sets:3, reps:'21', extra:'Método 21', img:IMG.homeArms, hint:'7 reps medio rango inferior + 7 medio rango superior + 7 rango completo. Sin descanso.' },
+    ],
+  },
+  legs: {
+    w1: [
+      { name:'Sentadilla Búlgara', sub:'Pie trasero en silla · unilateral', sets:4, reps:'12/pierna', extra:'Unilateral', img:IMG.homeSquat, hint:'Pie trasero en silla o sofá. Baja hasta que la rodilla trasera casi toque el suelo. 12 por pierna.' },
+      { name:'Sentadilla con Salto', sub:'Sentadilla profunda + salto explosivo', sets:4, reps:'15', extra:'Pliométrico', img:IMG.lunge, hint:'Baja en sentadilla profunda, salta explosivamente. Aterriza suave, vuelve a bajar inmediatamente.' },
+      { name:'Peso Muerto a Una Pierna', sub:'Equilibrio + isquiotibiales · mochila', sets:3, reps:'12/pierna', extra:'Estabilidad', img:IMG.homeLegs2, hint:'Con mochila en una mano. Bisagra de cadera con una pierna. Siente el estiramiento en isquio.' },
+      { name:'Elevaciones de Talón a Una Pierna', sub:'En un escalón · rango completo', sets:4, reps:'20/pierna', extra:'Alto volumen', img:IMG.calfRaise, hint:'Borde de un escalón. Baja hasta máximo estiramiento, sube a la punta. 20 reps por pierna.' },
+    ],
+    w2: [
+      { name:'Sentadilla Pistol (Asistida)', sub:'A una pierna · agárrate de puerta si necesitás', sets:3, reps:'6/pierna', extra:'Avanzado', img:IMG.homeSquat, hint:'Sentadilla a una pierna. Si no podés hacerla libre, sujétate de una puerta para asistir.' },
+      { name:'Zancadas Caminando', sub:'Pasos largos continuos · 20 pasos', sets:4, reps:'20 pasos', extra:'Resistencia', img:IMG.lunge, hint:'Paso largo, rodilla trasera al suelo, impulsa con la pierna delantera. Sin pausa entre pasos.' },
+      { name:'Puente de Glúteos a Una Pierna', sub:'Una pierna extendida · máxima contracción', sets:3, reps:'15/pierna', extra:'Glúteos', img:IMG.homeLegs2, hint:'Acostado, una pierna al aire. Empuja la cadera arriba con una pierna. Aprieta el glúteo 2 seg.' },
+      { name:'Wall Sit', sub:'Sentadilla isométrica contra la pared', sets:3, reps:'60 seg', extra:'Isométrico', img:IMG.homeSquat, hint:'Espalda contra la pared, muslos paralelos al suelo. Mantén 60 seg. El dolor es temporal.' },
+    ],
+    w3: [
+      { name:'Sentadilla con Mochila', sub:'Mochila pesada como sobrecarga', sets:5, reps:'15', extra:'+Peso', img:IMG.homeSquat, hint:'Mochila al frente como goblet squat o en la espalda. Profundidad completa. 5 × 15.' },
+      { name:'Step-ups en Silla', sub:'Subir a silla con una pierna · alternando', sets:4, reps:'12/pierna', extra:'Funcional', img:IMG.lunge, hint:'Silla sólida. Sube con una pierna sin impulsar con la otra. Baja controlado.' },
+      { name:'Nordic Curl Asistido', sub:'Arrodillado · baja lento usando los isquios', sets:3, reps:'6', extra:'Excéntrico', img:IMG.homeLegs2, hint:'Pies anclados, baja el torso lento usando solo isquios. Usa las manos para impulsarte de vuelta.' },
+      { name:'Saltos al Cajón (Silla)', sub:'Salto desde sentadilla a superficie elevada', sets:3, reps:'10', extra:'Potencia', img:IMG.homeSquat, hint:'Superficie sólida a la altura de la rodilla. Sentadilla + salto + aterrizaje suave arriba.' },
+    ],
+    w4: [
+      { name:'Sentadilla Tempo 5-3-1', sub:'5 seg bajando, 3 pausa, 1 subiendo', sets:4, reps:'8', extra:'Tempo extremo', img:IMG.homeSquat, hint:'El tempo más brutal. 8 reps tardan más de un minuto. Sin peso es devastador.' },
+      { name:'Zancada Reversa + Salto', sub:'Zancada atrás y salta al cambiar pierna', sets:3, reps:'10/pierna', extra:'Explosivo', img:IMG.lunge, hint:'Zancada atrás, sube explosivamente y cambia de pierna en el aire.' },
+      { name:'Puente Glúteo Marcha', sub:'Puente arriba + marcha alternando piernas', sets:3, reps:'20', extra:'Estabilidad', img:IMG.homeLegs2, hint:'Caderas arriba todo el tiempo. Levanta un pie, luego el otro como si marchases. Sin bajar.' },
+      { name:'Tabata Sentadillas', sub:'20 seg trabajo, 10 seg descanso × 8 rondas', sets:1, reps:'8 rondas', extra:'4 min', img:IMG.homeSquat, hint:'4 minutos de infierno puro. 20 seg de sentadillas máximas, 10 seg reposo. Repite 8 veces.' },
+    ],
+  },
+  shoulders: {
+    w1: [
+      { name:'Pike Push-ups', sub:'Flexión en V invertida · simula press militar', sets:4, reps:'12', extra:'Deltoides', img:IMG.homeShoulder, hint:'Pies en el suelo, caderas arriba formando V invertida. Baja la cabeza al suelo. Simula OHP.' },
+      { name:'Elevaciones Laterales con Botellas', sub:'Botellas de agua como mancuernas', sets:4, reps:'20', extra:'Alto volumen', img:IMG.gym2, hint:'Botellas de 1.5L o 2L. 20 reps por serie. Las laterales son de alto volumen y peso bajo.' },
+      { name:'Handstand Hold (Pared)', sub:'Parada de manos contra la pared', sets:3, reps:'30 seg', extra:'Isométrico', img:IMG.homeShoulder, hint:'Pateá hacia arriba contra la pared. Mantén 30 seg. Fortalece todo el hombro.' },
+      { name:'Encogimientos con Mochila', sub:'Mochila pesada como barra de shrugs', sets:3, reps:'20', extra:'Trapecio', img:IMG.gym4, hint:'Mochila pesada en ambas manos o al frente. Encogimientos lentos con pausa arriba.' },
+    ],
+    w2: [
+      { name:'Pike Push-up Pies Elevados', sub:'Pies en silla · mayor carga en hombros', sets:4, reps:'10', extra:'Avanzado', img:IMG.homeShoulder, hint:'Pies elevados en silla, caderas bien arriba. Baja la cabeza al suelo. Más peso en los hombros.' },
+      { name:'Y-Raises con Botellas', sub:'Tumbado boca abajo · brazos en Y', sets:3, reps:'15', extra:'Post. + traps', img:IMG.gym2, hint:'Boca abajo en el suelo. Levanta los brazos en forma de Y. Trabaja trapecio medio y posterior.' },
+      { name:'Lateral Raises 21s', sub:'7 abajo, 7 arriba, 7 completas', sets:3, reps:'21', extra:'Método 21', img:IMG.gym4, hint:'Con botellas: 7 medio rango inferior, 7 superior, 7 completas. Sin descanso entre fases.' },
+      { name:'Wall Slides', sub:'Espalda contra pared · brazos suben y bajan', sets:3, reps:'15', extra:'Movilidad', img:IMG.homeShoulder, hint:'Espalda y brazos contra la pared. Desliza los brazos arriba y abajo sin despegar. Movilidad + activación.' },
+    ],
+    w3: [
+      { name:'Pseudo HSPU (Negativas)', sub:'Parada de manos + baja lento 5 seg', sets:3, reps:'5', extra:'Excéntrico', img:IMG.homeShoulder, hint:'Desde handstand contra pared, baja en 5 seg controlados. Sube pateando. Máxima fuerza.' },
+      { name:'Front Raise con Galón', sub:'Galón de agua · elevación frontal', sets:3, reps:'12', extra:'Anterior', img:IMG.gym2, hint:'Galón con ambas manos. Sube a la altura de los ojos. Baja en 3 seg.' },
+      { name:'Lateral Raise Isométrico', sub:'Brazos extendidos al costado · mantener', sets:3, reps:'30 seg', extra:'Isométrico', img:IMG.gym4, hint:'Con botellas, brazos a 90° del cuerpo. Mantén 30 seg. El deltoides lateral arde.' },
+      { name:'Band Pull-Apart', sub:'Banda elástica · posterior + traps', sets:4, reps:'20', extra:'Banda', img:IMG.homeShoulder, hint:'Banda a la altura de hombros. Separa las manos estirando la banda. Aprieta omóplatos.' },
+    ],
+    w4: [
+      { name:'Pike Push-up + Hold', sub:'Push-up + mantener abajo 3 seg', sets:4, reps:'8', extra:'Tempo', img:IMG.homeShoulder, hint:'Baja en pike push-up, mantén abajo 3 seg, sube explosivo. 8 reps devastadoras.' },
+      { name:'Circuito Lateral: 50 Reps', sub:'Completar 50 elevaciones laterales con botellas', sets:1, reps:'50 total', extra:'Challenge', img:IMG.gym2, hint:'50 reps totales en las menos series posibles. Meta: menos de 3 series.' },
+      { name:'Remo Alto con Mochila', sub:'Mochila pesada · jala hasta el mentón', sets:3, reps:'15', extra:'Traps + delts', img:IMG.gym4, hint:'Mochila pesada. Remo alto hasta la altura del pecho. Codos por encima de las manos.' },
+      { name:'Around the World', sub:'Con botellas · frente → arriba → atrás', sets:3, reps:'10', extra:'Completo', img:IMG.homeShoulder, hint:'Elevación frontal → pasa sobre la cabeza → baja atrás. Círculo completo = 1 rep.' },
+    ],
+  },
+  arms: {
+    w1: [
+      { name:'Curl con Mochila', sub:'Mochila pesada como barra EZ', sets:4, reps:'12', extra:'Bíceps', img:IMG.homeArms, hint:'Agarra la mochila por las asas. Curl completo con codos fijos al costado.' },
+      { name:'Flexiones Diamante', sub:'Manos juntas bajo el pecho · tríceps máximo', sets:4, reps:'15', extra:'Tríceps', img:IMG.homePush, hint:'Manos formando diamante. Codos pegados al cuerpo. Máxima activación de tríceps.' },
+      { name:'Curl Concentrado con Galón', sub:'Galón de agua · un brazo a la vez', sets:3, reps:'12/brazo', extra:'Pico', img:IMG.homeArms, hint:'Sentado, codo en la rodilla. Curl concentrado. Contracción máxima arriba.' },
+      { name:'Dips de Tríceps en Banco', sub:'Manos en banco, pies elevados', sets:3, reps:'20', extra:'Alto vol.', img:IMG.dips, hint:'Manos en el borde del banco, pies elevados. 20 reps. Agrega mochila en regazo para más peso.' },
+    ],
+    w2: [
+      { name:'Curl Toalla Isométrico', sub:'Toalla en pie · mantener 20 seg', sets:3, reps:'20 seg', extra:'Isométrico', img:IMG.homeArms, hint:'Pisa una toalla, agarra con dos manos y tira. Mantén la posición 20 seg. Bíceps en fuego.' },
+      { name:'Flexiones Cerradas Tempo', sub:'Manos juntas · 4 seg bajando', sets:4, reps:'10', extra:'Tempo', img:IMG.homePush, hint:'Flexiones con manos al ancho de hombros. 4 seg bajando. Tríceps bajo tensión prolongada.' },
+      { name:'Curl Martillo con Botellas', sub:'Agarre neutro · braquial y antebrazo', sets:3, reps:'15', extra:'Martillo', img:IMG.homeArms, hint:'Botellas de agua con agarre neutro (palmas se miran). Sube sin rotar la muñeca.' },
+      { name:'Kickbacks con Botella', sub:'Extensión de tríceps inclinado', sets:3, reps:'15/brazo', extra:'Aislado', img:IMG.dips, hint:'Inclinado, codo arriba pegado al torso. Extiende el brazo hacia atrás. Aprieta el tríceps.' },
+    ],
+    w3: [
+      { name:'Curl 21s con Mochila', sub:'7+7+7 = devastación total', sets:3, reps:'21', extra:'Método 21', img:IMG.homeArms, hint:'7 medio inferior + 7 medio superior + 7 completas. La mochila arde en las manos.' },
+      { name:'Push-up Cerrado + Abierto', sub:'1 cerrado + 1 abierto = 1 rep', sets:3, reps:'10', extra:'Compuesto', img:IMG.homePush, hint:'Alterna una flexión cerrada (tríceps) con una abierta (pecho). No descanses entre ellas.' },
+      { name:'Curl Invertido con Mochila', sub:'Palmas abajo · antebrazo exterior', sets:3, reps:'12', extra:'Antebrazos', img:IMG.homeArms, hint:'Agarra la mochila con las palmas mirando abajo. Sube lento. Trabaja la cara exterior del antebrazo.' },
+      { name:'Dips Negativos 8 seg', sub:'Solo la bajada, 8 seg', sets:3, reps:'6', extra:'Excéntrico', img:IMG.dips, hint:'Baja en 8 seg controlados. Sube usando las piernas. Solo importa la fase excéntrica.' },
+    ],
+    w4: [
+      { name:'Curl Drop-set con Mochila', sub:'Quitar peso progresivamente', sets:3, reps:'30+ total', extra:'Drop-set', img:IMG.homeArms, hint:'Empieza pesado. Cuando no puedas más, saca un libro de la mochila. Sigue hasta vacía.' },
+      { name:'100 Push-ups Challenge', sub:'100 flexiones cerradas totales', sets:1, reps:'100 total', extra:'Challenge', img:IMG.homePush, hint:'100 flexiones cerradas en las menos series posibles. Registra tu marca.' },
+      { name:'Farmer Walk con Galones', sub:'Camina con galones pesados', sets:3, reps:'45 seg', extra:'Agarre', img:IMG.homeArms, hint:'Un galón en cada mano. Camina con hombros atrás, core apretado. Fortalece antebrazos y traps.' },
+      { name:'Circuito Final Brazos', sub:'Curl + dips + curl martillo sin pausa', sets:3, reps:'10+10+10', extra:'Triset', img:IMG.dips, hint:'10 curl mochila + 10 dips + 10 curl martillo SIN descanso. 3 rondas. Descansa 2 min entre rondas.' },
+    ],
+  },
+  legs2: {
+    w1: [
+      { name:'Hip Thrust en Silla', sub:'Espalda en silla, cadera empuja arriba', sets:4, reps:'20', extra:'Glúteos', img:IMG.homeLegs2, hint:'Espalda en el borde de silla. Planta los pies, empuja la cadera al cielo. Aprieta 2 seg arriba.' },
+      { name:'Buenos Días con Mochila', sub:'Bisagra de cadera · isquiotibiales', sets:4, reps:'15', extra:'Isquios', img:IMG.homeSquat, hint:'Mochila en la espalda alta. Inclina el torso manteniendo la espalda recta. Siente los isquios.' },
+      { name:'Plancha + Marcha', sub:'Plancha frontal marchando · core completo', sets:3, reps:'60 seg', extra:'Core', img:IMG.gym3, hint:'Posición de plancha, alterna levantando una mano y la pierna contraria. 60 seg.' },
+      { name:'Elevaciones de Talón', sub:'En escalón · un pie a la vez', sets:4, reps:'25/pierna', extra:'Gemelos', img:IMG.calfRaise, hint:'Borde de escalón. Baja máximo, sube a la punta. 25 reps por pierna. Los gemelos necesitan volumen.' },
+    ],
+    w2: [
+      { name:'Puente Glúteo a Una Pierna', sub:'Máxima contracción unilateral', sets:4, reps:'15/pierna', extra:'Unilateral', img:IMG.homeLegs2, hint:'Una pierna al aire. Empuja la cadera con una pierna. Aprieta el glúteo 3 seg arriba.' },
+      { name:'Peso Muerto 1 Pierna + Mochila', sub:'Equilibrio + cadena posterior', sets:3, reps:'10/pierna', extra:'Estabilidad', img:IMG.homeSquat, hint:'Con mochila pesada. Bisagra a una pierna. Trabaja isquios, glúteos y equilibrio.' },
+      { name:'Dead Bug', sub:'Tumbado boca arriba · core anti-extensión', sets:3, reps:'12/lado', extra:'Core profundo', img:IMG.gym3, hint:'Espalda presionada al suelo. Extiende brazo y pierna contrarios alternando. Sin que la lumbar se despegue.' },
+      { name:'Sentadilla Isométrica 1 Pierna', sub:'Sentado en pared con una pierna', sets:3, reps:'30 seg/pierna', extra:'Isométrico', img:IMG.calfRaise, hint:'Wall sit a una pierna. 30 seg por pierna. Fortalece cuádriceps y estabilizadores.' },
+    ],
+    w3: [
+      { name:'Nordic Curl Asistido', sub:'Pies anclados · bajar lento con isquios', sets:3, reps:'6', extra:'Excéntrico', img:IMG.homeLegs2, hint:'Pies anclados bajo sofá/cama. Baja lo más lento posible usando solo isquios. Manos ayudan a volver.' },
+      { name:'Frog Pumps', sub:'Plantas de pies juntas · glúteo medio', sets:3, reps:'30', extra:'Activación', img:IMG.homeSquat, hint:'Tumbado, plantas de los pies juntas, rodillas abiertas. Empuja cadera arriba. 30 reps rápidas.' },
+      { name:'Pallof Press sin Banda', sub:'Presión isométrica anti-rotación con toalla', sets:3, reps:'10/lado', extra:'Anti-rotación', img:IMG.gym3, hint:'De rodillas. Empuja las manos al frente resistiendo la rotación. Usa la toalla anclada en una puerta.' },
+      { name:'Calf Raise Excéntrico', sub:'Sube con dos, baja con una · 5 seg', sets:3, reps:'10/pierna', extra:'Excéntrico', img:IMG.calfRaise, hint:'Sube con ambos pies, levanta uno y baja en 5 seg solo con el otro.' },
+    ],
+    w4: [
+      { name:'Circuito Glúteo: 100 Reps', sub:'Hip thrust + puente + frog pump hasta 100', sets:1, reps:'100 total', extra:'Challenge', img:IMG.homeLegs2, hint:'Combina hip thrust, puente y frog pumps para llegar a 100 reps totales. Sin pausa larga.' },
+      { name:'Good Morning Tempo', sub:'5 seg bajando, 2 pausa, 1 subiendo', sets:4, reps:'10', extra:'Tempo', img:IMG.homeSquat, hint:'Buenos días con mochila y tempo 5-2-1. 10 reps = más de un minuto de tensión en isquios.' },
+      { name:'Plank Challenge 3 min', sub:'Plancha frontal sin parar', sets:1, reps:'3 min', extra:'Resistencia', img:IMG.gym3, hint:'3 minutos seguidos. Si necesitás, pausa 5 seg y sigue. Meta de la semana 4.' },
+      { name:'Tabata Gemelos', sub:'20 seg trabajo, 10 descanso × 8', sets:1, reps:'8 rondas', extra:'4 min', img:IMG.calfRaise, hint:'4 minutos de elevaciones de talón. 20 seg trabajo, 10 seg pausa. 8 rondas = fuego total.' },
+    ],
+  },
+};
+
+// ═══════ GYM EXERCISES PER WEEK ═══════
+const GYM = {
+  chest: {
+    w1: [
+      { title:'Press de Banca con Barra', sub:'Movimiento principal · fuerza y masa', img:IMG.benchPress, type:'compound', s:4, r:'6', extra:'Pesado', extraL:'Intensidad', rest:'2 – 3 min', restSec:150, hint:'Baja 2–3 seg hasta rozar el pecho. Explota al subir. Agarre algo más ancho que los hombros.' },
+      { title:'Press Inclinado con Mancuernas', sub:'Pecho superior (clavicular) · rango completo', img:IMG.inclineDB, type:'compound', s:4, r:'8', extra:'Moderado', extraL:'Carga', rest:'2 min', restSec:120, hint:'Banco a 30–45°. Baja hasta sentir el estiramiento. No cierres completamente los codos arriba.' },
+      { title:'Aperturas con Mancuernas', sub:'Estiramiento máximo · congestión', img:IMG.cableFly, type:'iso', s:3, r:'12', extra:'Ligero', extraL:'Carga', rest:'90 seg', restSec:90, hint:'Codo ligeramente flexionado. Baja lento (3 seg) hasta tirón en el pecho. Sin inercia.' },
+      { title:'Press en Máquina (Chest Press)', sub:'Congestión final · fallo controlado', img:IMG.chestPress, type:'iso', s:3, r:'15', extra:'Al fallo', extraL:'Última serie', rest:'90 seg', restSec:90, hint:'La máquina permite fallo seguro. En la última serie, sigue hasta no poder más.' },
+      { title:'Fondos en Paralelas', sub:'Pecho inferior y tríceps · con lastre', img:IMG.dips, type:'compound', s:4, r:'8', extra:'+Lastre', extraL:'Progresión', rest:'2 min', restSec:120, hint:'Inclina el torso adelante para énfasis en pecho. Si 8 reps son fáciles, agrega lastre.' },
+      { title:'Extensiones de Tríceps en Polea', sub:'Agotamiento final · tres cabezas', img:IMG.overheadTri, type:'iso', s:3, r:'15', extra:'Cuerda', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Con cuerda: abre las manos al final para mayor contracción. Codos fijos al costado.' },
+    ],
+    w2: [
+      { title:'Press Inclinado con Barra', sub:'Pecho superior · fuerza clavicular', img:IMG.benchPress, type:'compound', s:4, r:'6', extra:'Pesado', extraL:'Intensidad', rest:'2 – 3 min', restSec:150, hint:'Banco a 30°. Agarre medio. Baja controlado al pecho superior. Empuja con fuerza.' },
+      { title:'Press Plano con Mancuernas', sub:'Rango de movimiento completo', img:IMG.inclineDB, type:'compound', s:4, r:'10', extra:'Moderado', extraL:'Carga', rest:'2 min', restSec:120, hint:'Mayor rango que con barra. Baja hasta que los codos pasen la línea del pecho. Contrae arriba.' },
+      { title:'Cruce de Poleas (Cable Fly)', sub:'Tensión constante en pecho · squeeze', img:IMG.cableFly, type:'iso', s:3, r:'15', extra:'Squeeze', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Poleas a la altura de los hombros. Cruza las manos al frente apretando el pecho 2 seg.' },
+      { title:'Pullover con Mancuerna', sub:'Expansión de caja torácica · pecho + dorsal', img:IMG.gym1, type:'iso', s:3, r:'12', extra:'Estiramiento', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Acostado transversal en banco. Baja la mancuerna detrás de la cabeza. Siente el estiramiento.' },
+      { title:'Press Declinado en Máquina', sub:'Pecho inferior · énfasis en fibras bajas', img:IMG.chestPress, type:'compound', s:3, r:'12', extra:'Moderado', extraL:'Carga', rest:'90 seg', restSec:90, hint:'Máquina en posición declinada o banco declinado. Trabaja las fibras inferiores del pectoral.' },
+      { title:'Press Francés con Barra EZ', sub:'Masa de tríceps · las 3 cabezas', img:IMG.skullCrusher, type:'iso', s:4, r:'10', extra:'Controlado', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Tumbado, baja la barra EZ a la frente. Codos fijos apuntando al techo. Extensión completa.' },
+    ],
+    w3: [
+      { title:'Press de Banca Pausa', sub:'Pausa 2 seg en el pecho · fuerza explosiva', img:IMG.benchPress, type:'compound', s:5, r:'4', extra:'Pausa 2s', extraL:'Técnica', rest:'3 min', restSec:180, hint:'Baja, mantén 2 seg con la barra en el pecho sin rebotar. Explota desde abajo. Fuerza pura.' },
+      { title:'Press Inclinado en Máquina', sub:'Volumen en pecho superior · rango seguro', img:IMG.chestPress, type:'compound', s:4, r:'10', extra:'Moderado', extraL:'Carga', rest:'2 min', restSec:120, hint:'Máquina inclinada. 4 × 10 con peso moderado. Enfoque en la conexión mente-músculo.' },
+      { title:'Aperturas en Cable Bajo', sub:'Pecho superior · cables desde abajo', img:IMG.cableFly, type:'iso', s:3, r:'15', extra:'Bajo → arriba', extraL:'Dirección', rest:'90 seg', restSec:90, hint:'Poleas abajo. Lleva las manos hacia arriba y adentro. Trabaja las fibras superiores del pecho.' },
+      { title:'Floor Press con Mancuernas', sub:'Rango parcial · fuerza en el lockout', img:IMG.inclineDB, type:'compound', s:3, r:'10', extra:'Parcial', extraL:'Rango', rest:'90 seg', restSec:90, hint:'Acostado en el suelo. Los codos tocan el suelo. Empuja. Elimina el rebote del pecho.' },
+      { title:'Fondos en Paralelas (Pesado)', sub:'Máxima carga · cinturón con discos', img:IMG.dips, type:'compound', s:4, r:'6', extra:'Pesado', extraL:'Carga', rest:'2 min', restSec:120, hint:'Agrega todo el lastre posible. 6 reps pesadas. Inclinación hacia adelante. Pecho + tríceps.' },
+      { title:'Extensión de Tríceps sobre Cabeza', sub:'Cabeza larga del tríceps · cable o mancuerna', img:IMG.overheadTri, type:'iso', s:3, r:'12', extra:'Mancuerna', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Mancuerna pesada detrás de la cabeza. Codos fijos. Extiende arriba. Siente la cabeza larga.' },
+    ],
+    w4: [
+      { title:'Press de Banca Tempo 3-1-1', sub:'Fase excéntrica lenta · máxima tensión', img:IMG.benchPress, type:'compound', s:4, r:'8', extra:'Tempo', extraL:'Técnica', rest:'2 min', restSec:120, hint:'3 seg bajando, 1 pausa, 1 subiendo. 8 reps con tempo = casi 40 seg de tensión por serie.' },
+      { title:'Press Inclinado Mancuernas (Neutro)', sub:'Agarre neutro · reduce estrés de hombro', img:IMG.inclineDB, type:'compound', s:4, r:'10', extra:'Neutro', extraL:'Agarre', rest:'2 min', restSec:120, hint:'Palmas se miran entre sí. Menor estrés en el hombro, mayor activación del pecho superior.' },
+      { title:'Pec Deck (Mariposa)', sub:'Aislamiento puro de pecho · máximo squeeze', img:IMG.cableFly, type:'iso', s:3, r:'15', extra:'Squeeze 3s', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'En máquina mariposa. Aprieta 3 seg en la contracción máxima. Trabaja la parte interna del pecho.' },
+      { title:'Svend Press', sub:'Press con disco entre las manos · inner chest', img:IMG.gym1, type:'iso', s:3, r:'15', extra:'Disco', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Disco entre las palmas a la altura del pecho. Empuja al frente apretando. Pecho interno en fuego.' },
+      { title:'Dips + Drop Set', sub:'Lastre → peso corporal sin descanso', img:IMG.dips, type:'compound', s:3, r:'8+Max', extra:'Drop set', extraL:'Técnica', rest:'2 min', restSec:120, hint:'8 reps con lastre, sacalo y hace reps al fallo solo con tu peso. Congestión total.' },
+      { title:'Tríceps en Polea (Barra V)', sub:'Contracción máxima · barra V o recta', img:IMG.overheadTri, type:'iso', s:4, r:'12', extra:'Barra V', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Barra V para mayor contracción del lateral del tríceps. Codos pegados. Sin balancear el cuerpo.' },
+    ],
+  },
+  back: {
+    w1: [
+      { title:'Peso Muerto Convencional', sub:'El más anabólico · cadena posterior completa', img:IMG.deadlift, type:'compound', s:4, r:'5', extra:'Máximo', extraL:'Carga', rest:'3 min', restSec:180, hint:'Barra pegada a tibias. Espalda neutra. Empuja el suelo con los pies. No redondees la lumbar.' },
+      { title:'Remo con Barra', sub:'Grosor de espalda · dorsal y romboides', img:IMG.barRow, type:'compound', s:4, r:'8', extra:'Codo pegado', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Torso a 45°. Barra al ombligo. Aprieta omóplatos 1 seg. Sin balanceo.' },
+      { title:'Dominadas (Agarre Pronado)', sub:'Amplitud en V · dorsal y bíceps', img:IMG.pullup, type:'compound', s:4, r:'6', extra:'+Lastre', extraL:'Progresión', rest:'2 min', restSec:120, hint:'Baja completamente. Lleva el pecho a la barra. Agarre ancho para mayor amplitud.' },
+      { title:'Jalón al Pecho en Polea', sub:'Amplitud de dorsal · complementa dominadas', img:IMG.latPull, type:'iso', s:3, r:'12', extra:'Agarre ancho', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Jala hacia el pecho (no a la nuca). Inclina levemente el torso. Siente el dorsal.' },
+      { title:'Remo en Polea Baja', sub:'Grosor · espalda media · pausa', img:IMG.cableRow, type:'iso', s:3, r:'12', extra:'Pausa 2 seg', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Espalda recta. Jala al abdomen, aprieta omóplatos 2 seg. Excéntrico lento.' },
+      { title:'Curl de Bíceps con Barra EZ', sub:'Superset con curl martillo', img:IMG.curlEZ, type:'iso', s:4, r:'10+12', extra:'Superset', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'10 reps curl EZ + 12 reps curl martillo SIN descanso. Codos fijos.' },
+    ],
+    w2: [
+      { title:'Peso Muerto Sumo', sub:'Más cuádriceps y aductores · postura ancha', img:IMG.deadlift, type:'compound', s:4, r:'5', extra:'Máximo', extraL:'Carga', rest:'3 min', restSec:180, hint:'Pies anchos, puntas hacia afuera. Agarre entre las piernas. Espalda vertical. Empuja el suelo.' },
+      { title:'Remo con Mancuerna a 1 Brazo', sub:'Unilateral · corrige desbalances', img:IMG.barRow, type:'compound', s:4, r:'10/lado', extra:'Unilateral', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Rodilla y mano en banco. Rema la mancuerna hacia la cadera. Aprieta omóplato arriba.' },
+      { title:'Dominadas Supinas (Chin-ups)', sub:'Bíceps + dorsal · agarre supino', img:IMG.pullup, type:'compound', s:4, r:'8', extra:'Supino', extraL:'Agarre', rest:'2 min', restSec:120, hint:'Palmas hacia vos. Mayor activación de bíceps. Lleva la barbilla sobre la barra.' },
+      { title:'Jalón Agarre Neutro', sub:'Dorsal con agarre en V · neutro', img:IMG.latPull, type:'iso', s:3, r:'12', extra:'Agarre V', extraL:'Accesorio', rest:'90 seg', restSec:90, hint:'Agarre neutro en V. Jala al pecho. Enfoca el dorsal inferior. Rango completo.' },
+      { title:'Remo en Máquina T-Bar', sub:'Grosor brutal · agarre cerrado', img:IMG.cableRow, type:'compound', s:4, r:'10', extra:'Pesado', extraL:'Carga', rest:'2 min', restSec:120, hint:'T-bar o landmine row. Agarre cerrado. Jala al pecho. Aprieta omóplatos 2 seg.' },
+      { title:'Curl Martillo con Mancuernas', sub:'Braquial y antebrazo · agarre neutro', img:IMG.curlEZ, type:'iso', s:3, r:'12', extra:'Neutro', extraL:'Agarre', rest:'60 seg', restSec:60, hint:'Palmas se miran. Sube sin rotar. Trabaja el braquial que hace el brazo más ancho.' },
+    ],
+    w3: [
+      { title:'Peso Muerto Rack Pull', sub:'Desde rodillas · sobrecarga de espalda', img:IMG.deadlift, type:'compound', s:4, r:'5', extra:'Supramáximo', extraL:'Carga', rest:'3 min', restSec:180, hint:'Barra a la altura de las rodillas en el rack. Permite usar más peso. Enfoque en lockout y traps.' },
+      { title:'Remo Pendlay', sub:'Desde el suelo · explosivo · fuerza bruta', img:IMG.barRow, type:'compound', s:4, r:'6', extra:'Explosivo', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Barra toca el suelo cada rep. Torso paralelo. Explosión al jalar. Reset entre reps.' },
+      { title:'Dominadas con Pausa', sub:'Pausa arriba 2 seg · máxima contracción', img:IMG.pullup, type:'compound', s:4, r:'6', extra:'Pausa 2s', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Sube, mantén 2 seg con la barbilla sobre la barra. Baja en 3 seg. 6 reps intensas.' },
+      { title:'Pulldown Brazos Rectos', sub:'Aislamiento de dorsal · brazos extendidos', img:IMG.latPull, type:'iso', s:3, r:'15', extra:'Brazos rectos', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Polea alta, brazos casi rectos. Empuja la barra hacia los muslos. Solo el dorsal trabaja.' },
+      { title:'Remo Meadows', sub:'Remo unilateral con barra landmine · ángulo único', img:IMG.cableRow, type:'iso', s:3, r:'10/lado', extra:'Unilateral', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Barra en esquina (landmine). De pie perpendicular. Rema con un brazo. Ángulo único para la espalda.' },
+      { title:'Curl Spider', sub:'Pecho contra banco inclinado · sin trampa', img:IMG.curlEZ, type:'iso', s:3, r:'12', extra:'Barra EZ', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Pecho apoyado en banco inclinado, brazos cuelgan. Curl sin posibilidad de hacer trampa.' },
+    ],
+    w4: [
+      { title:'Peso Muerto Convencional (PR)', sub:'Intenta un nuevo récord personal', img:IMG.deadlift, type:'compound', s:5, r:'3', extra:'PR Week', extraL:'Máximo', rest:'4 min', restSec:240, hint:'Semana de test. Calentamiento progresivo, sube hasta tu máximo para 3 reps. Técnica impecable.' },
+      { title:'Remo con Barra Supino', sub:'Agarre supino · mayor bíceps + dorsal bajo', img:IMG.barRow, type:'compound', s:4, r:'8', extra:'Supino', extraL:'Agarre', rest:'2 min', restSec:120, hint:'Agarre supino (palmas arriba). Mayor activación de bíceps y dorsal inferior. Barra al ombligo.' },
+      { title:'Dominadas Lastradas (PR)', sub:'Máximo peso posible para 5 reps', img:IMG.pullup, type:'compound', s:4, r:'5', extra:'PR Week', extraL:'Máximo', rest:'3 min', restSec:180, hint:'Cinturón con discos. El máximo peso que puedas hacer con buena forma por 5 reps.' },
+      { title:'Face Pulls en Polea', sub:'Salud del hombro · deltoides posterior', img:IMG.latPull, type:'iso', s:4, r:'20', extra:'Ligero', extraL:'Carga', rest:'60 seg', restSec:60, hint:'Polea a la altura de la cara. Jala hacia los lados de la cabeza. Rotación externa al final.' },
+      { title:'Remo Polea Alta (Kneeling)', sub:'Desde arriba · ángulo para el dorsal superior', img:IMG.cableRow, type:'iso', s:3, r:'12', extra:'Alto', extraL:'Dirección', rest:'90 seg', restSec:90, hint:'De rodillas frente a la polea alta. Jala hacia el pecho. Ángulo único para trapecio medio.' },
+      { title:'Curl 21s con Barra EZ', sub:'7+7+7 = devastación total', img:IMG.curlEZ, type:'iso', s:3, r:'21', extra:'Método 21', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'7 medio inferior + 7 medio superior + 7 completas. Sin descanso entre fases.' },
+    ],
+  },
+  legs: {
+    w1: [
+      { title:'Sentadilla con Barra (Back Squat)', sub:'El rey de las piernas', img:IMG.squat, type:'compound', s:5, r:'5', extra:'Máximo', extraL:'Carga', rest:'3 min', restSec:180, hint:'Baja hasta paralelo o más. Rodillas alineadas. Talones firmes. Suma 2.5 kg cada semana.' },
+      { title:'Prensa de Piernas', sub:'Volumen adicional de cuádriceps', img:IMG.legPress, type:'compound', s:4, r:'10', extra:'Rango completo', extraL:'Técnica', rest:'2 min', restSec:120, hint:'No bloquees las rodillas arriba. Baja hasta que las rodillas estén cerca del pecho.' },
+      { title:'Peso Muerto Rumano', sub:'Isquiotibiales y glúteos', img:IMG.rdl, type:'compound', s:4, r:'10', extra:'Espalda recta', extraL:'Clave', rest:'2 min', restSec:120, hint:'Empuja la cadera atrás. Rodillas levemente dobladas. Siente isquios. Baja a media pantorrilla.' },
+      { title:'Extensiones de Cuádriceps', sub:'Definición y congestión', img:IMG.legExt, type:'iso', s:3, r:'15', extra:'Pausa 1 seg', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Mantén 1 seg con piernas extendidas. Baja lentamente. Sin impulso.' },
+      { title:'Curl de Isquiotibiales', sub:'Fémur posterior · excéntrico lento', img:IMG.legCurl, type:'iso', s:3, r:'12', extra:'3 seg abajo', extraL:'Excéntrico', rest:'90 seg', restSec:90, hint:'Sube rápido, baja en 3 seg. Caderas pegadas al banco.' },
+      { title:'Elevaciones de Talones', sub:'Gemelos y sóleo · alto volumen', img:IMG.calfRaise, type:'iso', s:5, r:'15', extra:'Pausa 2 seg', extraL:'Cada extremo', rest:'60 seg', restSec:60, hint:'Rango completo: máximo estiramiento, máxima punta. Pausa 2 seg en cada extremo.' },
+    ],
+    w2: [
+      { title:'Sentadilla Frontal', sub:'Énfasis en cuádriceps · torso vertical', img:IMG.squat, type:'compound', s:4, r:'6', extra:'Pesado', extraL:'Carga', rest:'3 min', restSec:180, hint:'Barra en deltoides frontales. Codos arriba. Torso muy vertical. Más cuádriceps que back squat.' },
+      { title:'Hack Squat en Máquina', sub:'Cuádriceps puro sin estrés lumbar', img:IMG.legPress, type:'compound', s:4, r:'10', extra:'Profundo', extraL:'Rango', rest:'2 min', restSec:120, hint:'Máquina hack. Baja lo más profundo posible. Sin estrés en la espalda. Cuádriceps puro.' },
+      { title:'Peso Muerto Piernas Rígidas', sub:'Isquios · piernas casi rectas', img:IMG.rdl, type:'compound', s:4, r:'10', extra:'Rígido', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Piernas casi completamente rectas. Baja hasta sentir estiramiento máximo en isquios.' },
+      { title:'Zancadas con Barra', sub:'Unilateral · glúteos y cuádriceps', img:IMG.lunge, type:'compound', s:3, r:'10/pierna', extra:'Alternadas', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Paso largo. Rodilla trasera al suelo. Mantén el torso erguido. Alterna piernas.' },
+      { title:'Curl Isquios de Pie', sub:'Unilateral en máquina · una pierna', img:IMG.legCurl, type:'iso', s:3, r:'12/pierna', extra:'Unilateral', extraL:'Técnica', rest:'60 seg', restSec:60, hint:'De pie en la máquina. Una pierna a la vez. Corrige desbalances. Contracción máxima.' },
+      { title:'Gemelo Sentado', sub:'Sóleo (fibra profunda)', img:IMG.calfRaise, type:'iso', s:4, r:'20', extra:'Lento', extraL:'Tempo', rest:'60 seg', restSec:60, hint:'La posición sentada aísla el sóleo. 20 reps lentas. Pausa abajo y arriba.' },
+    ],
+    w3: [
+      { title:'Sentadilla con Pausa', sub:'Pausa 3 seg abajo · sin rebote', img:IMG.squat, type:'compound', s:4, r:'5', extra:'Pausa 3s', extraL:'Técnica', rest:'3 min', restSec:180, hint:'Baja, mantén 3 seg en la posición más profunda. Sin rebotar. Sube con fuerza.' },
+      { title:'Prensa Unilateral', sub:'Una pierna a la vez · corrige asimetría', img:IMG.legPress, type:'compound', s:3, r:'12/pierna', extra:'Unilateral', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Un pie centrado en la plataforma. 12 reps por pierna. Identifica la pierna más débil.' },
+      { title:'RDL con Mancuernas', sub:'Mayor rango + menor estrés lumbar', img:IMG.rdl, type:'compound', s:4, r:'10', extra:'Mancuernas', extraL:'Accesorio', rest:'2 min', restSec:120, hint:'Las mancuernas permiten mayor rango y menos estrés. Baja a los costados de las piernas.' },
+      { title:'Sissy Squat', sub:'Cuádriceps puro · inclinación hacia atrás', img:IMG.legExt, type:'iso', s:3, r:'12', extra:'Avanzado', extraL:'Nivel', rest:'90 seg', restSec:90, hint:'Inclina el cuerpo hacia atrás con las rodillas adelante. Aislamiento brutal de cuádriceps.' },
+      { title:'Nordic Curl en Máquina', sub:'Isquios excéntricos · prevención de lesiones', img:IMG.legCurl, type:'iso', s:3, r:'6', extra:'Excéntrico', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Baja lo más lento posible resistiendo con isquios. Previene lesiones. Muy avanzado.' },
+      { title:'Gemelo en Prensa', sub:'Mayor carga · rango en la prensa', img:IMG.calfRaise, type:'iso', s:5, r:'15', extra:'Pesado', extraL:'Carga', rest:'60 seg', restSec:60, hint:'Solo la punta de los pies en la plataforma de la prensa. Rango completo. Mayor peso posible.' },
+    ],
+    w4: [
+      { title:'Sentadilla 5-3-1 (Fuerza)', sub:'Series descendentes: 5, 3, 1 rep', img:IMG.squat, type:'compound', s:3, r:'5/3/1', extra:'PR Week', extraL:'Máximo', rest:'4 min', restSec:240, hint:'Semana de test. 5 reps, sube peso, 3 reps, sube, 1 rep máxima. Calentamiento extenso.' },
+      { title:'Prensa + Drop Set', sub:'3 sets normales + 1 drop set gigante', img:IMG.legPress, type:'compound', s:4, r:'10+Max', extra:'Drop set', extraL:'Técnica', rest:'2 min', restSec:120, hint:'3 series normales. Última serie: quita un disco, sigue, quita otro, sigue hasta vacía.' },
+      { title:'RDL a Una Pierna', sub:'Equilibrio + aislamiento unilateral', img:IMG.rdl, type:'compound', s:3, r:'10/pierna', extra:'Unilateral', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Con mancuerna. Una pierna. Bisagra perfecta. Trabaja equilibrio, isquios y glúteos.' },
+      { title:'Extensiones + Curl (Superset)', sub:'Cuádriceps + isquios sin descanso', img:IMG.legExt, type:'iso', s:4, r:'12+12', extra:'Superset', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'12 extensiones + inmediatamente 12 curl de isquios. Sin descanso entre ejercicios.' },
+      { title:'Sentadilla Goblet', sub:'Mancuerna al pecho · profundidad máxima', img:IMG.lunge, type:'compound', s:3, r:'15', extra:'Profundo', extraL:'Rango', rest:'90 seg', restSec:90, hint:'Mancuerna pegada al pecho. Baja lo más profundo posible. Codos tocan las rodillas.' },
+      { title:'Gemelo Drop Set', sub:'Pesado → medio → ligero sin parar', img:IMG.calfRaise, type:'iso', s:3, r:'15+15+15', extra:'Triple drop', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'15 reps pesado, baja peso, 15 medio, baja, 15 ligero. 45 reps sin parar. 3 rondas.' },
+    ],
+  },
+  shoulders: {
+    w1: [
+      { title:'Press Militar con Barra (OHP)', sub:'Rey del hombro · deltoides completo', img:IMG.ohp, type:'compound', s:4, r:'6', extra:'Pesado', extraL:'Carga', rest:'2 – 3 min', restSec:150, hint:'De pie o sentado. Barra al pecho, empuja recto. Glúteos y abdomen contraídos.' },
+      { title:'Press Arnold con Mancuernas', sub:'Rotación completa · 3 cabezas', img:IMG.arnoldPress, type:'compound', s:4, r:'10', extra:'Rotación lenta', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Palmas hacia vos, gira mientras subes. Movimiento lento y controlado siempre.' },
+      { title:'Elevaciones Laterales', sub:'Amplitud visual · deltoides lateral', img:IMG.latRaise, type:'iso', s:4, r:'15', extra:'Codo flexionado', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Sube hasta la altura del hombro. No eleves trapecios. Peso ligero, técnica perfecta.' },
+      { title:'Elevaciones Frontales con Placa', sub:'Deltoides anterior · fuerza frontal', img:IMG.frontRaise, type:'iso', s:3, r:'12', extra:'Alternado', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Placa o mancuernas. Brazos al frente hasta hombros. Codo levemente doblado.' },
+      { title:'Pájaros (Elevaciones Traseras)', sub:'Deltoides posterior · postura', img:IMG.rearDelt, type:'iso', s:4, r:'15', extra:'Torso paralelo', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Torso casi paralelo al suelo. Eleva brazos a los lados apretando omóplatos.' },
+      { title:'Encogimientos (Shrugs)', sub:'Trapecio superior · volumen en cuello', img:IMG.shrugs, type:'iso', s:4, r:'12', extra:'Pausa 2 seg', extraL:'Arriba', rest:'90 seg', restSec:90, hint:'Hombros directamente a las orejas. Pausa 2 seg. No movimiento circular. Baja lento.' },
+    ],
+    w2: [
+      { title:'Press con Mancuernas Sentado', sub:'Rango amplio · sin desequilibrio', img:IMG.ohp, type:'compound', s:4, r:'8', extra:'Pesado', extraL:'Carga', rest:'2 min', restSec:120, hint:'Sentado en banco a 90°. Mancuernas a la altura de orejas. Empuja recto arriba.' },
+      { title:'Elevación Lateral en Cable', sub:'Tensión constante · cable bajo', img:IMG.latRaise, type:'iso', s:4, r:'15', extra:'Cable', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Cable bajo, un brazo a la vez. Tensión constante en todo el rango. Superior a mancuernas.' },
+      { title:'Face Pulls', sub:'Deltoides posterior + rotadores', img:IMG.rearDelt, type:'iso', s:4, r:'20', extra:'Ligero', extraL:'Carga', rest:'60 seg', restSec:60, hint:'Polea a la cara. Jala y rota externamente. 20 reps. Salud del hombro.' },
+      { title:'Press Landmine', sub:'Barra en esquina · ángulo intermedio', img:IMG.arnoldPress, type:'compound', s:3, r:'10/brazo', extra:'Unilateral', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Barra en esquina. Empuja un brazo a la vez. Ángulo único entre press frontal y press inclinado.' },
+      { title:'Lu Raises', sub:'Frontal + lateral combinado', img:IMG.frontRaise, type:'iso', s:3, r:'10', extra:'Combinado', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Sube al frente hasta hombros, luego abre a los lados, baja. 1 rep = frontal + lateral.' },
+      { title:'Shrugs con Mancuernas', sub:'Rango de movimiento mayor que barra', img:IMG.shrugs, type:'iso', s:4, r:'15', extra:'Rango completo', extraL:'Técnica', rest:'60 seg', restSec:60, hint:'Las mancuernas permiten llevar los hombros más arriba y atrás. Rango superior a la barra.' },
+    ],
+    w3: [
+      { title:'Push Press', sub:'Press militar + impulso de piernas · más peso', img:IMG.ohp, type:'compound', s:4, r:'5', extra:'Pesado', extraL:'Carga', rest:'3 min', restSec:180, hint:'Press militar con leve impulso de rodillas. Permite más peso. Fase excéntrica lenta al bajar.' },
+      { title:'Elevación Lateral Inclinada', sub:'Acostado de lado en banco inclinado', img:IMG.latRaise, type:'iso', s:3, r:'12/lado', extra:'Inclinado', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Acostado de lado en banco 30°. Mayor estiramiento del deltoides lateral. 12 reps por lado.' },
+      { title:'Reverse Pec Deck', sub:'Máquina mariposa invertida · posterior', img:IMG.rearDelt, type:'iso', s:3, r:'15', extra:'Máquina', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'En la mariposa mirando hacia la máquina. Abrir brazos atrás. Apretar omóplatos.' },
+      { title:'Press Z (Sentado en Suelo)', sub:'Sin respaldo · core máximo + hombros', img:IMG.arnoldPress, type:'compound', s:3, r:'8', extra:'Inestable', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Sentado en el suelo con piernas extendidas. Press con mancuernas. El core trabaja al máximo.' },
+      { title:'Lateral Raise 1.5 Reps', sub:'Sube, baja a mitad, vuelve a subir, baja', img:IMG.frontRaise, type:'iso', s:3, r:'10', extra:'1.5 reps', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Sube hasta arriba, baja a la mitad, vuelve a subir, baja todo = 1 rep.' },
+      { title:'Farmer Walk Pesado', sub:'Paseo con mancuernas pesadas · traps', img:IMG.shrugs, type:'compound', s:3, r:'40 seg', extra:'Pesado', extraL:'Tiempo', rest:'90 seg', restSec:90, hint:'Las mancuernas más pesadas que puedas. Camina 40 seg. Traps, antebrazos y core en fuego.' },
+    ],
+    w4: [
+      { title:'OHP Tempo 3-2-1', sub:'3 seg bajando, 2 pausa, 1 subiendo', img:IMG.ohp, type:'compound', s:4, r:'6', extra:'Tempo', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Tempo controlado. 6 reps intensas. La pausa abajo elimina impulso y fuerza máxima contracción.' },
+      { title:'Arnold Press + Lateral (Super)', sub:'Arnold press + lateral raise sin descanso', img:IMG.arnoldPress, type:'compound', s:4, r:'8+12', extra:'Superset', extraL:'Técnica', rest:'2 min', restSec:120, hint:'8 Arnold press + inmediatamente 12 elevaciones laterales. Congestión total del deltoides.' },
+      { title:'Cable Lateral Raise (Drop Set)', sub:'Pesado → medio → ligero sin parar', img:IMG.latRaise, type:'iso', s:3, r:'10+10+10', extra:'Triple drop', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'En cable. 10 reps pesado, baja pin, 10 medio, baja, 10 ligero. Destrucción del lateral.' },
+      { title:'Rear Delt Fly (Cable)', sub:'Cables cruzados · posterior', img:IMG.rearDelt, type:'iso', s:3, r:'15', extra:'Cable cruzado', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Cables a la altura de la cara. Cruza las manos al inicio. Abre atrás apretando.' },
+      { title:'Upright Row con Barra EZ', sub:'Traps + deltoides medial · codo arriba', img:IMG.frontRaise, type:'compound', s:3, r:'10', extra:'Barra EZ', extraL:'Accesorio', rest:'90 seg', restSec:90, hint:'Barra EZ para muñecas. Jala hasta la barbilla. Codos siempre más altos que las manos.' },
+      { title:'Shrugs con Barra (PR)', sub:'Peso máximo · traps explosivos', img:IMG.shrugs, type:'compound', s:4, r:'8', extra:'PR Week', extraL:'Máximo', rest:'2 min', restSec:120, hint:'Semana de test. El máximo peso para 8 reps limpias con pausa arriba.' },
+    ],
+  },
+  arms: {
+    w1: [
+      { title:'Curl con Barra Recta', sub:'Base de masa del bíceps', img:IMG.curlBar, type:'compound', s:4, r:'8', extra:'Pesado', extraL:'Carga', rest:'2 min', restSec:120, hint:'Codos fijos. Sin impulso de cadera. Baja controlado 2–3 seg. Contracción máxima arriba.' },
+      { title:'Curl Inclinado con Mancuernas', sub:'Estiramiento de la cabeza larga', img:IMG.curlIncline, type:'iso', s:3, r:'12', extra:'Supinación', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Banco a 45°. Brazos cuelgan. Rota la muñeca al subir.' },
+      { title:'Curl Predicador (Scott)', sub:'Pico del bíceps · sin trampa', img:IMG.curlScott, type:'iso', s:3, r:'12', extra:'Barra EZ', extraL:'Accesorio', rest:'90 seg', restSec:90, hint:'El banco fija los codos. Extensión completa. Sube explosivo, baja 3 seg.' },
+      { title:'Press Francés (Skull Crusher)', sub:'Masa de las 3 cabezas del tríceps', img:IMG.skullCrusher, type:'compound', s:4, r:'10', extra:'Controlado', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Barra EZ. Codos arriba. Baja a la frente. Cuidado con el peso.' },
+      { title:'Press de Banca Cerrado', sub:'Fuerza y grosor del tríceps', img:IMG.closeBench, type:'compound', s:4, r:'8', extra:'Ancho hombros', extraL:'Agarre', rest:'2 min', restSec:120, hint:'Agarre al ancho de hombros. Codos cerca del torso. Enfoca en tríceps.' },
+      { title:'Extensión sobre la Cabeza', sub:'Cabeza larga · máximo estiramiento', img:IMG.overheadTri, type:'iso', s:3, r:'15', extra:'Mancuerna', extraL:'Accesorio', rest:'90 seg', restSec:90, hint:'Brazos sobre la cabeza. Codos fijos al techo. Baja detrás, extiende arriba.' },
+      { title:'Curl de Muñecas + Invertido', sub:'Antebrazos · superset final', img:IMG.gym2, type:'iso', s:3, r:'15+15', extra:'Superset', extraL:'Técnica', rest:'60 seg', restSec:60, hint:'15 curl de muñeca + 15 curl invertido. Fortalece el agarre y antebrazos.' },
+    ],
+    w2: [
+      { title:'Curl Martillo con Mancuernas', sub:'Braquial + antebrazo · grosor', img:IMG.curlBar, type:'compound', s:4, r:'10', extra:'Pesado', extraL:'Carga', rest:'90 seg', restSec:90, hint:'Agarre neutro. Sube sin rotar. El braquial da grosor al brazo. Codos fijos.' },
+      { title:'Curl en Polea Baja', sub:'Tensión constante · cable bajo', img:IMG.curlIncline, type:'iso', s:3, r:'15', extra:'Cable', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Barra recta o cuerda. Cable mantiene tensión en todo el rango. Sube y baja controlado.' },
+      { title:'Curl Concentrado', sub:'Pico de bíceps · aislamiento perfecto', img:IMG.curlScott, type:'iso', s:3, r:'12/brazo', extra:'Concentrado', extraL:'Técnica', rest:'60 seg', restSec:60, hint:'Sentado, codo en la rodilla. Una mancuerna. Curl lento con máxima contracción arriba.' },
+      { title:'Extensión de Tríceps en Polea', sub:'Barra V · máxima contracción lateral', img:IMG.overheadTri, type:'iso', s:4, r:'12', extra:'Barra V', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Barra V. Codos pegados al cuerpo. Extiende hasta lockout. Aprieta 1 seg abajo.' },
+      { title:'Fondos en Paralelas (Tríceps)', sub:'Torso vertical · énfasis en tríceps', img:IMG.dips, type:'compound', s:4, r:'10', extra:'Vertical', extraL:'Posición', rest:'2 min', restSec:120, hint:'Torso vertical (no inclinado). Codos atrás. Máxima activación de tríceps.' },
+      { title:'Kickback con Mancuerna', sub:'Contracción final del tríceps', img:IMG.closeBench, type:'iso', s:3, r:'15/brazo', extra:'Ligero', extraL:'Carga', rest:'60 seg', restSec:60, hint:'Inclinado, codo arriba. Extiende atrás. Aprieta el tríceps al final. Peso ligero.' },
+      { title:'Wrist Roller', sub:'Antebrazos · enrollar y desenrollar', img:IMG.gym2, type:'iso', s:3, r:'3 subidas', extra:'Rodillo', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Cuerda con peso. Enrolla subiendo, desenrolla bajando. 3 ciclos. Antebrazos al máximo.' },
+    ],
+    w3: [
+      { title:'Curl Barra EZ (21s)', sub:'7+7+7 = método devastador', img:IMG.curlBar, type:'compound', s:3, r:'21', extra:'Método 21', extraL:'Técnica', rest:'2 min', restSec:120, hint:'7 medio inferior + 7 medio superior + 7 completas. Sin descanso entre fases.' },
+      { title:'Curl Spider con Mancuernas', sub:'Pecho en banco inclinado · sin trampa', img:IMG.curlIncline, type:'iso', s:3, r:'12', extra:'Spider', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Pecho apoyado en banco inclinado. Brazos cuelgan. Curl sin posibilidad de hacer trampa.' },
+      { title:'Curl de Predicador en Cable', sub:'Tensión constante + aislamiento', img:IMG.curlScott, type:'iso', s:3, r:'12', extra:'Cable', extraL:'Accesorio', rest:'90 seg', restSec:90, hint:'Predicador con cable bajo. Tensión constante. 12 reps lentas.' },
+      { title:'JM Press', sub:'Híbrido entre skull crusher y press cerrado', img:IMG.skullCrusher, type:'compound', s:4, r:'8', extra:'Híbrido', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Baja la barra hacia la barbilla (no la frente). Codos apuntan adelante. Híbrido único.' },
+      { title:'Dips + Drop Set', sub:'Lastre → peso corporal al fallo', img:IMG.dips, type:'compound', s:3, r:'8+Max', extra:'Drop set', extraL:'Técnica', rest:'2 min', restSec:120, hint:'8 reps con lastre. Saca el peso, sigue al fallo. Congestión total del tríceps.' },
+      { title:'Extensión Overhead con Cable', sub:'Cable detrás · estiramiento máximo', img:IMG.overheadTri, type:'iso', s:3, r:'15', extra:'Cable', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'De espaldas a la polea. Cuerda sobre la cabeza. Extiende al frente. Cabeza larga en máximo estiramiento.' },
+      { title:'Plate Pinch', sub:'Apretar discos · agarre de hierro', img:IMG.gym2, type:'iso', s:3, r:'30 seg', extra:'Isométrico', extraL:'Tiempo', rest:'60 seg', restSec:60, hint:'Dos discos lisos agarrados solo con los dedos. Mantén 30 seg. Antebrazo interno.' },
+    ],
+    w4: [
+      { title:'Curl con Barra Recta (PR)', sub:'Máximo peso para 6 reps', img:IMG.curlBar, type:'compound', s:4, r:'6', extra:'PR Week', extraL:'Máximo', rest:'2 min', restSec:120, hint:'Semana de test. El máximo peso con técnica perfecta. Codos fijos. 6 reps.' },
+      { title:'Curl Inclinado + Martillo (Super)', sub:'Curl supino + martillo sin descanso', img:IMG.curlIncline, type:'iso', s:3, r:'10+10', extra:'Superset', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'10 curl inclinado supino + 10 curl martillo de pie. Sin descanso entre ejercicios.' },
+      { title:'Curl Drag', sub:'Codos atrás · bíceps corto', img:IMG.curlScott, type:'iso', s:3, r:'12', extra:'Drag', extraL:'Técnica', rest:'60 seg', restSec:60, hint:'Barra sube pegada al cuerpo. Codos van hacia atrás. Contracción intensa del bíceps.' },
+      { title:'Skull Crusher + Press Cerrado', sub:'12 skull crushers → 8 press cerrado', img:IMG.skullCrusher, type:'compound', s:3, r:'12+8', extra:'Combinado', extraL:'Técnica', rest:'2 min', restSec:120, hint:'12 skull crushers y cuando no puedas más, haz 8 press cerrado. Mismo set.' },
+      { title:'Tríceps Kickback (Cable)', sub:'Cable bajo · contracción máxima', img:IMG.overheadTri, type:'iso', s:3, r:'15/brazo', extra:'Cable', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Cable bajo. Inclinado. Extiende atrás. La tensión del cable mantiene el tríceps trabajando.' },
+      { title:'Press Cerrado Tempo 4-0-1', sub:'4 seg bajando, sin pausa, 1 subiendo', img:IMG.closeBench, type:'compound', s:3, r:'8', extra:'Tempo', extraL:'Técnica', rest:'2 min', restSec:120, hint:'4 seg bajando maximiza el daño al tríceps. 8 reps = más de 40 seg de tensión.' },
+      { title:'Farmer Walk + Curl Combo', sub:'Camina 20 seg, para y hace 8 curls × 3', img:IMG.gym2, type:'compound', s:3, r:'20s+8', extra:'Combo', extraL:'Funcional', rest:'90 seg', restSec:90, hint:'Mancuernas pesadas. Camina 20 seg, para y hace 8 curls. 3 rondas. Antebrazos y bíceps.' },
+    ],
+  },
+  legs2: {
+    w1: [
+      { title:'Hip Thrust con Barra', sub:'El rey de los glúteos · máxima contracción', img:IMG.squat, type:'compound', s:4, r:'10', extra:'Pesado', extraL:'Carga', rest:'2 min', restSec:120, hint:'Espalda en banco. Barra en la cadera. Empuja arriba apretando glúteos 2 seg.' },
+      { title:'Buenos Días con Barra', sub:'Bisagra de cadera · isquios y glúteos', img:IMG.rdl, type:'compound', s:4, r:'10', extra:'Espalda recta', extraL:'Clave', rest:'2 min', restSec:120, hint:'Barra en los traps. Inclina el torso manteniendo la espalda recta. Siente los isquios.' },
+      { title:'Curl Isquios Tumbado', sub:'Aislamiento de isquiotibiales', img:IMG.legCurl, type:'iso', s:4, r:'12', extra:'Excéntrico', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Sube rápido, baja en 3 seg. Caderas pegadas. Excéntrico controlado.' },
+      { title:'Abducción en Máquina', sub:'Glúteo medio · estabilidad de cadera', img:IMG.legPress, type:'iso', s:3, r:'20', extra:'Alto volumen', extraL:'Reps', rest:'60 seg', restSec:60, hint:'Abre las piernas contra la resistencia. 20 reps. Pausa 2 seg en la apertura máxima.' },
+      { title:'Plancha Frontal', sub:'Core anti-extensión · base de todo', img:IMG.gym3, type:'iso', s:3, r:'60 seg', extra:'Isométrico', extraL:'Tiempo', rest:'60 seg', restSec:60, hint:'Codos bajo los hombros. Cuerpo recto como tabla. Glúteos apretados. 60 seg.' },
+      { title:'Elevaciones de Talón en Máquina', sub:'Gemelos de pie · alto volumen', img:IMG.calfRaise, type:'iso', s:5, r:'20', extra:'Rango completo', extraL:'Técnica', rest:'60 seg', restSec:60, hint:'Baja al máximo estiramiento, sube a la punta. 20 reps × 5 series. Los gemelos necesitan volumen.' },
+    ],
+    w2: [
+      { title:'Hip Thrust a Una Pierna', sub:'Unilateral · corrige asimetrías', img:IMG.squat, type:'compound', s:3, r:'12/pierna', extra:'Unilateral', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Una pierna al aire. Empuja la cadera con una pierna. Aprieta el glúteo 3 seg arriba.' },
+      { title:'Peso Muerto Rumano (DB)', sub:'Mancuernas · mayor rango', img:IMG.rdl, type:'compound', s:4, r:'10', extra:'Mancuernas', extraL:'Accesorio', rest:'2 min', restSec:120, hint:'Mancuernas a los costados. Mayor rango que con barra. Siente los isquios al bajar.' },
+      { title:'Glute Kickback en Cable', sub:'Cable bajo · extensión de cadera aislada', img:IMG.legCurl, type:'iso', s:3, r:'15/pierna', extra:'Cable', extraL:'Accesorio', rest:'60 seg', restSec:60, hint:'Tobillera en cable bajo. Empuja la pierna atrás. Aprieta glúteo. Sin arquear la lumbar.' },
+      { title:'Aducción en Máquina', sub:'Aductores · estabilidad de cadera', img:IMG.legPress, type:'iso', s:3, r:'15', extra:'Moderado', extraL:'Carga', rest:'60 seg', restSec:60, hint:'Cierra las piernas contra la resistencia. 15 reps con contracción máxima.' },
+      { title:'Ab Wheel Rollout', sub:'Core anti-extensión dinámico', img:IMG.gym3, type:'iso', s:3, r:'10', extra:'Rodilla', extraL:'Posición', rest:'90 seg', restSec:90, hint:'Desde rodillas. Extiende la rueda al frente. Mantén la lumbar neutra. Regresa contrayendo.' },
+      { title:'Gemelo Sentado', sub:'Sóleo · fibra lenta de alto volumen', img:IMG.calfRaise, type:'iso', s:4, r:'20', extra:'Lento', extraL:'Tempo', rest:'60 seg', restSec:60, hint:'Sentado. 20 reps lentas. Pausa abajo 2 seg, pausa arriba 2 seg.' },
+    ],
+    w3: [
+      { title:'Hip Thrust + Banda', sub:'Banda elástica en rodillas + barra', img:IMG.squat, type:'compound', s:4, r:'12', extra:'Banda', extraL:'Accesorio', rest:'2 min', restSec:120, hint:'Banda en las rodillas fuerza abducción y activa más glúteo medio durante el hip thrust.' },
+      { title:'RDL a Una Pierna (DB)', sub:'Equilibrio + isquio unilateral', img:IMG.rdl, type:'compound', s:3, r:'10/pierna', extra:'Unilateral', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'Mancuerna en mano contraria. Bisagra a una pierna. Equilibrio + isquios.' },
+      { title:'Curl Isquios Sentado', sub:'Posición sentada · mayor estiramiento', img:IMG.legCurl, type:'iso', s:4, r:'12', extra:'Sentado', extraL:'Posición', rest:'90 seg', restSec:90, hint:'Sentado permite mayor estiramiento del isquio. 12 reps con excéntrico lento.' },
+      { title:'Cable Pull-Through', sub:'Bisagra de cadera con cable · glúteos', img:IMG.legPress, type:'compound', s:3, r:'15', extra:'Cable', extraL:'Accesorio', rest:'90 seg', restSec:90, hint:'De espaldas al cable bajo. Bisagra de cadera. Empuja adelante apretando glúteos.' },
+      { title:'Pallof Press', sub:'Core anti-rotación · cable lateral', img:IMG.gym3, type:'iso', s:3, r:'10/lado', extra:'Anti-rotación', extraL:'Técnica', rest:'60 seg', restSec:60, hint:'Cable a la altura del pecho. Empuja las manos al frente resistiendo la rotación. 10/lado.' },
+      { title:'Gemelo de Pie + Sentado (Super)', sub:'De pie + sentado sin descanso', img:IMG.calfRaise, type:'iso', s:4, r:'15+15', extra:'Superset', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'15 de pie (gastrocnemio) + 15 sentado (sóleo). Sin pausa. 4 supersets.' },
+    ],
+    w4: [
+      { title:'Hip Thrust Drop Set', sub:'Pesado → medio → ligero sin parar', img:IMG.squat, type:'compound', s:3, r:'10+10+10', extra:'Triple drop', extraL:'Técnica', rest:'2 min', restSec:120, hint:'10 reps pesado, saca un disco, 10 más, saca otro, 10 más. 30 reps por set.' },
+      { title:'Buenos Días Sentado', sub:'Sentado elimina piernas · isquios puros', img:IMG.rdl, type:'compound', s:3, r:'12', extra:'Sentado', extraL:'Posición', rest:'90 seg', restSec:90, hint:'Sentado en banco. Barra en traps. Inclina el torso. Aísla los isquios de las piernas.' },
+      { title:'Nordic Curl (Asistido)', sub:'Excéntrico de isquios · prevención', img:IMG.legCurl, type:'iso', s:3, r:'6', extra:'Excéntrico', extraL:'Técnica', rest:'2 min', restSec:120, hint:'Pies anclados. Baja lo más lento posible. Asistete con las manos para volver.' },
+      { title:'Frog Pumps con Disco', sub:'Glúteos en posición de rana · disco en cadera', img:IMG.legPress, type:'iso', s:3, r:'30', extra:'Alto vol.', extraL:'Reps', rest:'60 seg', restSec:60, hint:'Plantas de pies juntas, rodillas abiertas. Disco en la cadera. 30 reps rápidas.' },
+      { title:'Dead Bug', sub:'Core profundo · anti-extensión lumbar', img:IMG.gym3, type:'iso', s:3, r:'12/lado', extra:'Core profundo', extraL:'Técnica', rest:'60 seg', restSec:60, hint:'Espalda presionada al suelo. Brazo y pierna contrarios se extienden. Sin despegar la lumbar.' },
+      { title:'Gemelo Drop Set + Pausa', sub:'Drop set + 5 seg pausa en cada posición', img:IMG.calfRaise, type:'iso', s:3, r:'12+12+12', extra:'Drop + pausa', extraL:'Técnica', rest:'90 seg', restSec:90, hint:'12 pesado con pausa, baja peso, 12 más, baja, 12 ligero. Pausa arriba y abajo en cada rep.' },
+    ],
+  },
+};
+
+const TIPS = {
+  chest: 'Prioriza la fase excéntrica (bajada): 2–3 segundos abajo, explosivo arriba. El mayor estímulo ocurre durante la fase de estiramiento bajo tensión.',
+  back: 'Visualiza que estás empujando los codos hacia el suelo, no que jalas con las manos. Eso activa el dorsal en lugar del bíceps.',
+  legs: 'Las piernas liberan más testosterona y hormona de crecimiento que cualquier otro grupo muscular. La sentadilla profunda activa 40% más de glúteo.',
+  shoulders: 'El deltoides lateral da la ilusión de amplitud en V. Elevaciones laterales con cable mantienen tensión constante, superiores a mancuernas.',
+  arms: 'El tríceps ocupa 2/3 del brazo. Si querés brazos grandes, entrena tríceps con la misma intensidad (o más) que bíceps.',
+  legs2: 'La cadena posterior (glúteos e isquios) es responsable de la postura, velocidad y prevención de lesiones lumbares.',
+};
+
+const DAYS = [
+  { id:'lunes', label:'LUN · Pecho', dayName:'LUNES', muscles:'Pecho · Tríceps', color:'chest', exKey:'chest', warmKey:'chest', homeKey:'chest', exCount:6, time:'~75 min' },
+  { id:'martes', label:'MAR · Espalda', dayName:'MARTES', muscles:'Espalda · Bíceps', color:'back', exKey:'back', warmKey:'back', homeKey:'back', exCount:6, time:'~80 min' },
+  { id:'miercoles', label:'MIÉ · Piernas', dayName:'MIÉRCOLES', muscles:'Cuádriceps · Isquios · Gemelos', color:'legs', exKey:'legs', warmKey:'legs', homeKey:'legs', exCount:6, time:'~85 min' },
+  { id:'jueves', label:'JUE · Hombros', dayName:'JUEVES', muscles:'Hombros · Trapecio', color:'shoulders', exKey:'shoulders', warmKey:'shoulders', homeKey:'shoulders', exCount:6, time:'~70 min' },
+  { id:'viernes', label:'VIE · Brazos', dayName:'VIERNES', muscles:'Bíceps · Tríceps · Antebrazos', color:'arms', exKey:'arms', warmKey:'arms', homeKey:'arms', exCount:7, time:'~70 min' },
+  { id:'sabado', label:'SÁB · Piernas +', dayName:'SÁBADO', muscles:'Glúteos · Isquios · Core', color:'legs', exKey:'legs2', warmKey:'legs2', homeKey:'legs2', exCount:6, time:'~75 min' },
+];
+
+const WEEKS = [
+  { id:'w1', label:'Semana 1', sub:'Fundamentos · Técnica' },
+  { id:'w2', label:'Semana 2', sub:'Variación · Volumen' },
+  { id:'w3', label:'Semana 3', sub:'Intensificación · Pausa' },
+  { id:'w4', label:'Semana 4', sub:'Peak · PRs · Drop Sets' },
+];
+
+// ══════════ RENDER FUNCTIONS ══════════
+
+function renderExCard(ex, idx) {
+  const typeClass = ex.type === 'compound' ? 'type-compound' : 'type-iso';
+  const typeLabel = ex.type === 'compound' ? 'Compuesto' : 'Aislado';
+  const num = String(idx + 1).padStart(2, '0');
+  return `
+    <div class="ex-card">
+      <div class="ex-image-wrap">
+        <img src="${ex.img}" alt="${ex.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ex-img-fallback" style="display:none">${ex.title.substring(0,20).toUpperCase()}</div>
+        <div class="ex-image-overlay"></div>
+        <div class="ex-num-badge">${num}</div>
+        <div class="ex-type-badge ${typeClass}">${typeLabel}</div>
+      </div>
+      <div class="ex-body">
+        <div><div class="ex-title">${ex.title}</div><div class="ex-subtitle">${ex.sub}</div></div>
+        <div class="ex-stats">
+          <div class="ex-stat-box"><div class="ex-stat-val">${ex.s}</div><div class="ex-stat-lbl">Series</div></div>
+          <div class="ex-stat-box"><div class="ex-stat-val">${ex.r}</div><div class="ex-stat-lbl">Reps</div></div>
+          <div class="ex-stat-box"><div class="ex-stat-val">${ex.extra}</div><div class="ex-stat-lbl">${ex.extraL}</div></div>
+        </div>
+        <div class="rest-timer-row" data-seconds="${ex.restSec}">
+          <div class="rest-info"><div class="rest-label">Pausa entre series</div><div class="rest-val">${ex.rest}</div></div>
+          <div class="timer-countdown"></div>
+          <button class="timer-btn" onclick="startTimer(this)">▶ Iniciar</button>
+        </div>
+        <div class="ex-hint">${ex.hint}</div>
+      </div>
+    </div>`;
+}
+
+function renderWarmup(items) {
+  return items.map((w, i) => `
+    <div class="warmup-card">
+      <div class="warmup-num">${String(i+1).padStart(2,'0')}</div>
+      <div>
+        <div class="warmup-name">${w.name}</div>
+        <div class="warmup-detail">${w.detail}</div>
+        <div class="warmup-dur">${w.dur}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderHomeCard(h, idx) {
+  return `
+    <div class="home-card">
+      <div class="home-img-wrap">
+        <img src="${h.img}" alt="${h.name}" loading="lazy" onerror="this.parentElement.style.display='none'">
+        <div class="home-img-overlay"></div>
+        <div class="home-badge">En Casa / Parque</div>
+      </div>
+      <div class="home-body">
+        <div class="home-title">${h.name}</div>
+        <div class="home-sub">${h.sub}</div>
+        <div class="home-stats">
+          <div class="home-stat"><div class="home-stat-val">${h.sets}</div><div class="home-stat-lbl">Series</div></div>
+          <div class="home-stat"><div class="home-stat-val">${h.reps}</div><div class="home-stat-lbl">Reps</div></div>
+          <div class="home-stat"><div class="home-stat-val">${h.extra}</div><div class="home-stat-lbl">Nota</div></div>
+        </div>
+        <div class="home-hint">${h.hint}</div>
+      </div>
+    </div>`;
+}
+
+function buildAll() {
+  // Week nav
+  const weekNav = document.getElementById('weekNav');
+  weekNav.innerHTML = WEEKS.map((w, i) => `
+    <button class="week-btn ${i===0?'active':''}" onclick="showWeek('${w.id}',this)">
+      ${w.label}<span class="week-sub">${w.sub}</span>
+    </button>`).join('');
+
+  let mainHTML = '';
+
+  WEEKS.forEach((week, wi) => {
+    let dayNavHTML = `<nav class="day-nav week-daynav" id="daynav-${week.id}" style="${wi>0?'display:none':''}">`;
+    DAYS.forEach((d, di) => {
+      dayNavHTML += `<button class="day-btn ${di===0?'active':''}" onclick="showDay('${week.id}-${d.id}',this,'daynav-${week.id}')">${d.label}</button>`;
+    });
+    dayNavHTML += `<button class="day-btn" onclick="showDay('${week.id}-nutricion',this,'daynav-${week.id}')">🥩 Nutrición</button></nav>`;
+    mainHTML += dayNavHTML;
+
+    // Week panel wrapper
+    mainHTML += `<div class="week-panel ${wi===0?'active':''}" id="weekpanel-${week.id}">`;
+
+    DAYS.forEach((day, di) => {
+      const exercises = GYM[day.exKey][week.id];
+      const warmups = WARMUPS[day.warmKey];
+      const homeExs = HOME_ALTS[day.homeKey][week.id];
+
+      mainHTML += `<div id="${week.id}-${day.id}" class="day-panel ${di===0?'active':''}" data-color="${day.color}">`;
+      mainHTML += `<div class="day-header">
+        <div><div class="day-title">${day.dayName}</div><div class="muscle-tag">${day.muscles}</div></div>
+        <div class="day-meta"><div class="big-num">${exercises.length}</div><small>ejercicios</small><small style="margin-top:4px">${day.time}</small></div>
+      </div>`;
+
+      // Warmup section
+      mainHTML += `<div class="section-header">
+        <div class="section-icon warmup-icon">🔥</div>
+        <div><div class="section-label warmup-label">CALENTAMIENTO</div><div class="section-sublabel">Realiza antes de empezar · 8–10 min</div></div>
+      </div>`;
+      mainHTML += `<div class="warmup-grid">${renderWarmup(warmups)}</div>`;
+
+      // Gym exercises
+      mainHTML += `<div class="section-header">
+        <div class="section-icon gym-icon">🏋️</div>
+        <div><div class="section-label gym-label">RUTINA EN GYM</div><div class="section-sublabel">${week.label} · ${week.sub}</div></div>
+      </div>`;
+      mainHTML += `<div class="exercises-grid">${exercises.map((ex, i) => renderExCard(ex, i)).join('')}</div>`;
+
+      // Tip
+      mainHTML += `<div class="tip-card"><div class="tip-title">💡 Clave del día — ${day.muscles.split('·')[0].trim()}</div><div class="tip-text">${TIPS[day.exKey]}</div></div>`;
+
+      // Home alternative
+      mainHTML += `<div class="section-header">
+        <div class="section-icon home-icon">🏠</div>
+        <div><div class="section-label home-label">ALTERNATIVA EN CASA / PARQUE</div><div class="section-sublabel">Si no podés ir al gym · sin equipamiento</div></div>
+      </div>`;
+      mainHTML += `<div class="home-grid">${homeExs.map((h, i) => renderHomeCard(h, i)).join('')}</div>`;
+
+      mainHTML += `</div>`;
+    });
+
+    // Nutrition panel
+    mainHTML += `<div id="${week.id}-nutricion" class="day-panel">
+      <div class="day-header">
+        <div><div class="day-title" style="color:var(--accent)">NUTRICIÓN</div><div class="muscle-tag" style="color:var(--accent);border-color:var(--accent)">Plan de Alimentación para Volumen</div></div>
+      </div>
+      <div class="nutrition-strip">
+        <div class="nutr-box"><div class="nutr-val">~2800</div><div class="nutr-label">Calorías / día</div></div>
+        <div class="nutr-box"><div class="nutr-val">160g</div><div class="nutr-label">Proteína / día</div></div>
+        <div class="nutr-box"><div class="nutr-val">350g</div><div class="nutr-label">Carbohidratos</div></div>
+        <div class="nutr-box"><div class="nutr-val">80g</div><div class="nutr-label">Grasas saludables</div></div>
+        <div class="nutr-box"><div class="nutr-val">3–4L</div><div class="nutr-label">Agua / día</div></div>
+      </div>
+      <div class="principles">
+        <div class="principle-card"><div class="principle-num">01</div><div class="principle-title">Superávit calórico</div><div class="principle-text">Come 300–500 kcal sobre tu mantenimiento. Arroz, avena, papa, pollo, carne, huevos como base.</div></div>
+        <div class="principle-card"><div class="principle-num">02</div><div class="principle-title">2g proteína / kg</div><div class="principle-text">Con 80 kg = ~160g proteína/día. Distribuye en 4–5 comidas. Pollo, carne, huevos, atún, yogur griego.</div></div>
+        <div class="principle-card"><div class="principle-num">03</div><div class="principle-title">Timing nutricional</div><div class="principle-text">Pre-entreno: carbos + proteína (60–90 min antes). Post: whey + carbos simples dentro de 30 min.</div></div>
+        <div class="principle-card"><div class="principle-num">04</div><div class="principle-title">Sueño = músculo</div><div class="principle-text">8 horas obligatorias. La hormona de crecimiento se libera en el sueño profundo.</div></div>
+        <div class="principle-card"><div class="principle-num">05</div><div class="principle-title">Progresión continua</div><div class="principle-text">Suma 2.5 kg por semana en compuestos. O suma 1 rep por serie. Sin sobrecarga, no hay crecimiento.</div></div>
+        <div class="principle-card"><div class="principle-num">06</div><div class="principle-title">Suplementos clave</div><div class="principle-text">Creatina 5g/día siempre. Whey post-entreno. Multivitamínico. Lo demás es marketing.</div></div>
+      </div>
+      <div class="tip-card" style="margin-top:32px">
+        <div class="tip-title">📋 Resumen semanal PPL · Lunes a Domingo</div>
+        <div class="tip-text">
+          <strong style="color:#fff">Lunes</strong> Pecho + Tríceps · <strong style="color:#fff">Martes</strong> Espalda + Bíceps · <strong style="color:#fff">Miércoles</strong> Piernas (anterior) · <strong style="color:#fff">Jueves</strong> Hombros · <strong style="color:#fff">Viernes</strong> Brazos · <strong style="color:#fff">Sábado</strong> Piernas (posterior) + Core · <strong style="color:#fff">Domingo</strong> Descanso total
+        </div>
+      </div>
+    </div>`;
+
+    mainHTML += `</div>`;
+  });
+
+  document.getElementById('dayNavContainer').innerHTML = '';
+  document.getElementById('mainContent').innerHTML = '';
+
+  // Insert navs and panels
+  const temp = document.createElement('div');
+  temp.innerHTML = mainHTML;
+  const navContainer = document.getElementById('dayNavContainer');
+  const mainContainer = document.getElementById('mainContent');
+
+  temp.querySelectorAll('.week-daynav').forEach(n => navContainer.appendChild(n));
+  temp.querySelectorAll('.week-panel').forEach(p => mainContainer.appendChild(p));
+
+  // Auto-generate YouTube links
+  document.querySelectorAll('.ex-card').forEach(card => {
+    const title = card.querySelector('.ex-title').textContent.trim();
+    const query = encodeURIComponent('cómo hacer ' + title + ' correctamente tutorial gym');
+    const url = 'https://www.youtube.com/results?search_query=' + query;
+    const btn = document.createElement('a');
+    btn.href = url; btn.target = '_blank'; btn.rel = 'noopener noreferrer'; btn.className = 'yt-btn';
+    btn.innerHTML = '<svg width="16" height="12" viewBox="0 0 24 17" fill="currentColor"><path d="M23.5 2.5a3 3 0 0 0-2.1-2.1C19.5 0 12 0 12 0S4.5 0 2.6.4A3 3 0 0 0 .5 2.5C0 4.4 0 8.5 0 8.5s0 4.1.5 6a3 3 0 0 0 2.1 2.1C4.5 17 12 17 12 17s7.5 0 9.4-.4a3 3 0 0 0 2.1-2.1c.5-1.9.5-6 .5-6s0-4.1-.5-6zM9.5 12V5l6.5 3.5L9.5 12z"/></svg>Ver tutorial en YouTube';
+    card.querySelector('.ex-body').appendChild(btn);
+  });
+}
+
+// ══════════ NAVIGATION ══════════
+
+function showWeek(weekId, btn) {
+  document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.week-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.week-daynav').forEach(n => n.style.display = 'none');
+  document.getElementById('weekpanel-' + weekId).classList.add('active');
+  document.getElementById('daynav-' + weekId).style.display = 'flex';
+
+  // Show first day
+  const panel = document.getElementById('weekpanel-' + weekId);
+  panel.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  const first = panel.querySelector('.day-panel');
+  if (first) first.classList.add('active');
+
+  const dayNav = document.getElementById('daynav-' + weekId);
+  dayNav.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  const firstBtn = dayNav.querySelector('.day-btn');
+  if (firstBtn) firstBtn.classList.add('active');
+
+  // Progress
+  const weekIdx = WEEKS.findIndex(w => w.id === weekId);
+  const pct = Math.round(((weekIdx + 1) / WEEKS.length) * 100);
+  document.getElementById('progressLabel').textContent = `Semana ${weekIdx+1} de ${WEEKS.length}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function showDay(dayId, btn, navId) {
+  const nav = document.getElementById(navId);
+  const weekId = navId.replace('daynav-', '');
+  const panel = document.getElementById('weekpanel-' + weekId);
+  panel.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  nav.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(dayId).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════ TIMER ══════════
+
+const timers = new Map();
+function startTimer(btn) {
+  const row = btn.closest('.rest-timer-row');
+  const totalSec = parseInt(row.dataset.seconds);
+  const cd = row.querySelector('.timer-countdown');
+  if (timers.has(row)) {
+    clearInterval(timers.get(row)); timers.delete(row);
+    btn.textContent = '▶ Iniciar'; btn.className = 'timer-btn'; cd.textContent = '';
+    return;
+  }
+  btn.textContent = '⏹ Parar'; btn.classList.add('running');
+  let rem = totalSec;
+  cd.textContent = fmt(rem);
+  const iv = setInterval(() => {
+    rem--;
+    if (rem <= 0) {
+      clearInterval(iv); timers.delete(row);
+      btn.textContent = '✓ Listo'; btn.className = 'timer-btn done'; cd.textContent = '0:00';
+      setTimeout(() => { btn.textContent = '▶ Iniciar'; btn.className = 'timer-btn'; cd.textContent = ''; }, 3000);
+    } else { cd.textContent = fmt(rem); }
+  }, 1000);
+  timers.set(row, iv);
+}
+function fmt(s) { return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); }
+
+// ══════════ INIT ══════════
+buildAll();
+</script>
+</body>
+</html>
